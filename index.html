@@ -3,316 +3,325 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>打卡系统</title>
+    <title>员工打卡系统</title>
     <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+            background: #f5f5f5;
             min-height: 100vh;
-            padding: 10px;
-            font-size: 16px;
         }
-
-        .container {
-            max-width: 100%;
-            margin: 0 auto;
-        }
-
-        h1 {
+        .header {
+            background: linear-gradient(135deg, #07c160 0%, #10b981 100%);
             color: white;
+            padding: 20px;
             text-align: center;
-            margin-bottom: 15px;
-            font-size: 1.8em;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-
-        .url-display {
-            background: rgba(255,255,255,0.95);
-            padding: 12px 15px;
-            border-radius: 10px;
-            text-align: center;
-            margin-bottom: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-
-        .url-display a {
-            color: #667eea;
-            font-size: 0.95em;
-            font-weight: bold;
-            text-decoration: none;
-            word-break: break-all;
-            display: block;
-        }
-
-        .url-display a:hover {
-            text-decoration: underline;
-        }
-
-        .tabs {
+        .header h1 { font-size: 1.4em; font-weight: 600; }
+        .header p { font-size: 0.85em; opacity: 0.9; margin-top: 4px; }
+        
+        .tab-bar {
             display: flex;
-            gap: 8px;
-            margin-bottom: 15px;
-        }
-
-        .tab-btn {
-            flex: 1;
-            padding: 12px 15px;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            background: rgba(255,255,255,0.2);
-            color: white;
-            transition: all 0.3s;
-            text-align: center;
-        }
-
-        .tab-btn.active {
             background: white;
-            color: #667eea;
+            border-bottom: 1px solid #eee;
         }
-
-        .tab-btn:hover {
-            transform: translateY(-2px);
+        .tab-item {
+            flex: 1;
+            padding: 14px 0;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 500;
+            color: #666;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .tab-item.active {
+            color: #07c160;
+        }
+        .tab-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 3px;
+            background: #07c160;
+            border-radius: 2px;
         }
 
         .card {
             background: white;
+            margin: 12px;
             border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
         }
-
-        .hidden {
-            display: none;
-        }
-
-        .checkin-form {
-            max-width: 100%;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 6px;
+        
+        .clock {
+            font-size: 3.5em;
+            font-weight: 300;
             color: #333;
-            font-weight: 600;
+            text-align: center;
+            margin-bottom: 8px;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        .date-text {
+            text-align: center;
+            color: #999;
             font-size: 14px;
+            margin-bottom: 20px;
         }
 
-        input[type="text"],
-        input[type="password"],
-        select {
+        .form-group { margin-bottom: 16px; }
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        .form-group input {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
+            padding: 12px 14px;
+            border: 1px solid #e8e8e8;
             border-radius: 8px;
-            font-size: 16px;
+            font-size: 15px;
             transition: border-color 0.3s;
         }
-
-        input:focus,
-        select:focus {
+        .form-group input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #07c160;
         }
 
         .btn {
-            padding: 14px 20px;
+            width: 100%;
+            padding: 14px;
             border: none;
             border-radius: 8px;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
-            width: 100%;
             touch-action: manipulation;
         }
-
-        .btn:active {
-            transform: scale(0.98);
-        }
-
         .btn-primary {
-            background: #667eea;
+            background: linear-gradient(135deg, #07c160 0%, #10b981 100%);
             color: white;
         }
-
-        .btn-primary:hover {
-            background: #5568d3;
-        }
-
-        .btn-success {
-            background: #48bb78;
-            color: white;
-        }
-
-        .btn-success:hover {
-            background: #38a169;
-        }
-
-        .btn-danger {
-            background: #f56565;
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background: #e53e3e;
-        }
-
+        .btn-primary:hover { opacity: 0.9; }
+        .btn-primary:active { transform: scale(0.98); }
         .btn-secondary {
-            background: #718096;
+            background: #f5f5f5;
+            color: #666;
+        }
+        .btn-danger {
+            background: #ff4d4f;
             color: white;
         }
 
-        .btn-secondary:hover {
-            background: #5a6b7d;
-        }
-
-        .clock {
-            font-size: 3em;
-            text-align: center;
-            color: #667eea;
-            font-weight: bold;
-            margin: 15px 0;
-        }
-
-        .date-display {
-            text-align: center;
-            color: #718096;
-            font-size: 1em;
-            margin-bottom: 15px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-            font-size: 14px;
-        }
-
-        th, td {
-            padding: 10px 8px;
-            text-align: left;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        th {
-            background: #667eea;
-            color: white;
-            font-weight: 600;
-            position: sticky;
-            top: 0;
-            font-size: 12px;
-        }
-
-        tr:hover {
-            background: #f7fafc;
-        }
-
-        .table-container {
-            max-height: 300px;
-            overflow-y: auto;
-            margin-top: 15px;
-            border-radius: 8px;
-            border: 1px solid #e0e0e0;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .filter-bar {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .filter-bar label {
-            display: inline;
-            font-weight: normal;
-        }
-
-        .filter-bar select,
-        .filter-bar input {
-            padding: 10px;
-            font-size: 14px;
-        }
-
-        .filter-row {
-            display: flex;
-            gap: 10px;
-        }
-
-        .filter-row > * {
-            flex: 1;
-        }
-
-        .location-info {
+        .location-card {
             background: #e6f7ff;
             border: 1px solid #91d5ff;
             border-radius: 8px;
-            padding: 12px;
+            padding: 14px;
+            margin-top: 16px;
+        }
+        .location-title {
+            font-size: 13px;
+            color: #1890ff;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .location-text {
+            font-size: 14px;
+            color: #333;
+            word-break: break-all;
+        }
+        .location-coords {
+            font-size: 12px;
+            color: #999;
+            margin-top: 6px;
+        }
+        .location-link {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 14px;
+            background: #1890ff;
+            color: white;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .status-card {
+            background: #f6ffed;
+            border: 1px solid #b7eb8f;
+            border-radius: 8px;
+            padding: 14px;
+            margin-top: 16px;
+        }
+        .status-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #d9f7be;
+        }
+        .status-row:last-child { border-bottom: none; }
+        .status-label { color: #52c41a; font-size: 13px; }
+        .status-value { color: #333; font-weight: 500; font-size: 14px; }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .summary-item {
+            background: white;
+            padding: 16px 12px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .summary-num {
+            font-size: 1.8em;
+            font-weight: 600;
+            color: #07c160;
+        }
+        .summary-label {
+            font-size: 11px;
+            color: #999;
+            margin-top: 4px;
+        }
+
+        .table-wrapper {
+            max-height: 400px;
+            overflow-y: auto;
+            border-radius: 8px;
+            border: 1px solid #eee;
             margin-top: 12px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        th {
+            background: #f8f9fa;
+            padding: 12px 8px;
+            text-align: left;
+            color: #666;
+            font-weight: 600;
+            font-size: 12px;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+        td {
+            padding: 12px 8px;
+            border-bottom: 1px solid #f0f0f0;
+            color: #333;
+        }
+        tr:hover { background: #fafafa; }
+
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .filter-bar select, .filter-bar input {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1px solid #e8e8e8;
+            border-radius: 6px;
             font-size: 14px;
         }
 
-        .whitelist-section {
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px solid #e0e0e0;
+        .export-btn {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+        }
+        .export-btn .btn { flex: 1; }
+
+        .message {
+            position: fixed;
+            top: 100px;
+            left: 12px;
+            right: 12px;
+            padding: 14px 16px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+            text-align: center;
+        }
+        .message.success { background: #52c41a; }
+        .message.error { background: #ff4d4f; }
+        .message.info { background: #1890ff; }
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
-        .whitelist-section h3 {
-            margin-bottom: 10px;
-            font-size: 15px;
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+            font-size: 14px;
+        }
+        .empty-state .icon { font-size: 48px; margin-bottom: 12px; opacity: 0.5; }
+
+        .admin-login {
+            max-width: 320px;
+            margin: 40px auto;
+        }
+        .admin-login h2 {
+            text-align: center;
             color: #333;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+        .admin-login .tip {
+            text-align: center;
+            color: #999;
+            font-size: 12px;
+            margin-top: 12px;
         }
 
+        .whitelist-section {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #eee;
+        }
         .whitelist-list {
             max-height: 200px;
             overflow-y: auto;
-            border: 1px solid #e0e0e0;
+            border: 1px solid #eee;
             border-radius: 8px;
-            padding: 10px;
-            background: #fafafa;
+            padding: 8px;
+            margin-top: 12px;
         }
-
         .whitelist-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 8px;
-            border-bottom: 1px solid #eee;
+            padding: 10px 8px;
+            border-bottom: 1px solid #f5f5f5;
         }
-
-        .whitelist-item:last-child {
-            border-bottom: none;
-        }
-
-        .whitelist-item .phone {
-            font-weight: 600;
-            color: #333;
-        }
-
-        .whitelist-item .name {
-            color: #666;
-            font-size: 13px;
-        }
-
+        .whitelist-item:last-child { border-bottom: none; }
+        .whitelist-phone { font-weight: 500; color: #333; }
         .btn-remove {
-            background: #f56565;
-            color: white;
+            background: #fff1f0;
+            color: #ff4d4f;
             border: none;
             padding: 4px 8px;
             border-radius: 4px;
@@ -320,354 +329,158 @@
             cursor: pointer;
         }
 
-        .btn-remove:hover {
-            background: #e53e3e;
-        }
-
-        .location-info.success {
-            background: #f6ffed;
-            border-color: #b7eb8f;
-        }
-
-        .location-info.error {
-            background: #fff1f0;
-            border-color: #ffccc7;
-        }
-
-        .location-link {
-            display: inline-block;
-            margin-top: 8px;
-            padding: 8px 12px;
-            background: #1890ff;
-            color: white;
-            border-radius: 6px;
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        .location-link:active {
-            background: #096dd9;
-        }
-
-        .location-coords {
-            font-size: 13px;
-            color: #666;
-            margin-top: 5px;
-        }
-
-        .status-display {
-            background: #f7fafc;
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 15px;
-        }
-
-        .status-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .status-item:last-child {
-            border-bottom: none;
-        }
-
-        .status-label {
-            font-weight: 600;
-            color: #4a5568;
-            font-size: 14px;
-        }
-
-        .status-value {
-            color: #667eea;
-            font-weight: 600;
-            font-size: 14px;
-            word-break: break-all;
-        }
-
-        .summary-cards {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .summary-card {
-            background: white;
-            padding: 12px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-
-        .summary-card h4 {
-            color: #718096;
-            font-size: 11px;
-            margin-bottom: 5px;
-        }
-
-        .summary-card .value {
-            font-size: 1.5em;
-            font-weight: bold;
-            color: #667eea;
-        }
-
-        .export-section {
-            background: #f7fafc;
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 15px;
-        }
-
-        .export-section h3 {
-            margin-bottom: 10px;
-            color: #333;
-            font-size: 16px;
-        }
-
-        .export-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .btn-export {
-            padding: 10px 15px;
-            font-size: 13px;
-            flex: 1;
-            min-width: 100px;
-        }
-
-        .admin-login {
-            max-width: 100%;
-            margin: 30px auto;
-        }
-
-        .message {
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            right: 10px;
-            padding: 12px 20px;
-            border-radius: 8px;
-            color: white;
-            font-weight: 600;
-            z-index: 1000;
-            animation: slideIn 0.3s ease;
-            text-align: center;
-            font-size: 14px;
-        }
-
-        .message.success { background: #48bb78; }
-        .message.error { background: #f56565; }
-        .message.info { background: #667eea; }
-
-        @keyframes slideIn {
-            from { transform: translateY(-100%); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 30px;
-            color: #718096;
-            font-size: 14px;
-        }
-
-        .checkin-status {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 13px;
-            color: #52c41a;
-            margin-top: 8px;
-        }
-
-        .mobile-hint {
-            text-align: center;
-            color: #999;
-            font-size: 12px;
-            margin-top: 5px;
-        }
-
-        @media (max-width: 400px) {
-            body { padding: 8px; }
-            h1 { font-size: 1.5em; }
-            .clock { font-size: 2.5em; }
-            .summary-cards { grid-template-columns: 1fr; }
-            .tab-btn { padding: 10px 12px; font-size: 13px; }
+        @media (max-width: 375px) {
+            .clock { font-size: 2.8em; }
+            .summary-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>📋 打卡系统</h1>
+    <div class="header">
+        <h1>📋 员工打卡系统</h1>
+        <p>城南代理商专用</p>
+    </div>
 
-        <div class="url-display">
-            <strong>🌐 网站地址：</strong>
-            <a href="https://lijia740518.github.io/lijia-ee/" target="_blank">https://lijia740518.github.io/lijia-ee/</a>
+    <div class="tab-bar">
+        <div class="tab-item active" onclick="showTab('checkin')">🏠 打卡</div>
+        <div class="tab-item" onclick="showTab('records')">📊 记录</div>
+        <div class="tab-item" onclick="showTab('admin')">🔐 管理</div>
+    </div>
+
+    <div id="checkinTab">
+        <div class="card">
+            <div class="clock" id="clock">00:00:00</div>
+            <div class="date-text" id="dateText">2024年1月1日 星期一</div>
+
+            <div class="form-group">
+                <label>👤 姓名</label>
+                <input type="text" id="nameInput" placeholder="请输入姓名" />
+            </div>
+
+            <div class="form-group">
+                <label>📱 手机号</label>
+                <input type="text" id="phoneInput" placeholder="请输入手机号" />
+            </div>
+
+            <button class="btn btn-primary" id="checkinBtn" onclick="handleCheckin()">
+                ✅ 签到
+            </button>
+
+            <div class="location-card" id="locationCard">
+                <div class="location-title">📍 获取位置中...</div>
+                <div class="location-text" id="locationText">正在获取您的位置...</div>
+                <div class="location-coords" id="locationCoords"></div>
+                <a href="#" id="mapLink" class="location-link" style="display:none">🗺️ 查看地图</a>
+            </div>
+
+            <div class="status-card" id="statusCard" style="display:none">
+                <div class="status-row">
+                    <span class="status-label">姓名</span>
+                    <span class="status-value" id="statusName">-</span>
+                </div>
+                <div class="status-row">
+                    <span class="status-label">签到时间</span>
+                    <span class="status-value" id="statusCheckin">-</span>
+                </div>
+                <div class="status-row">
+                    <span class="status-label">签退时间</span>
+                    <span class="status-value" id="statusCheckout">-</span>
+                </div>
+                <div class="status-row">
+                    <span class="status-label">打卡地点</span>
+                    <span class="status-value" id="statusLocation">-</span>
+                </div>
+                <button class="btn btn-danger" style="margin-top: 12px;" id="checkoutBtn" onclick="handleCheckout()">
+                    🚪 签退
+                </button>
+            </div>
         </div>
 
-        <div class="tabs">
-            <button class="tab-btn active" onclick="showTab('checkin')">🏠 打卡</button>
-            <button class="tab-btn" onclick="showTab('admin')">🔐 管理</button>
+        <div class="card">
+            <h3 style="font-size: 15px; margin-bottom: 12px; color: #333;">📋 今日打卡</h3>
+            <div class="table-wrapper" id="todayRecords"></div>
+        </div>
+    </div>
+
+    <div id="recordsTab" style="display:none">
+        <div class="card">
+            <div class="filter-bar">
+                <input type="month" id="filterMonth" value="">
+                <input type="text" id="filterName" placeholder="搜索姓名">
+            </div>
+            <button class="btn btn-secondary" onclick="loadRecords()">🔍 查询</button>
+            
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>日期</th>
+                            <th>姓名</th>
+                            <th>签到</th>
+                            <th>签退</th>
+                            <th>打卡地点</th>
+                            <th>状态</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recordsTable"></tbody>
+                </table>
+            </div>
+
+            <div class="export-btn">
+                <button class="btn btn-primary" onclick="exportMonth()">📥 导出本月</button>
+                <button class="btn btn-secondary" onclick="exportAll()">📥 导出全部</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="adminTab" style="display:none">
+        <div class="card admin-login" id="loginPanel">
+            <h2>🔐 管理员登录</h2>
+            <div class="form-group">
+                <label>密码</label>
+                <input type="password" id="adminPwd" placeholder="请输入管理员密码" />
+            </div>
+            <button class="btn btn-primary" onclick="adminLogin()">登录</button>
+            <p class="tip">默认密码：admin123</p>
         </div>
 
-        <div id="checkinTab">
+        <div id="adminPanel" style="display:none">
             <div class="card">
-                <div class="clock" id="clock">00:00:00</div>
-                <div class="date-display" id="dateDisplay">2024年1月1日 星期一</div>
-
-                <div class="checkin-form">
-                    <div class="form-group">
-                        <label for="userName">姓名 *</label>
-                        <input type="text" id="userName" placeholder="请输入您的姓名" required>
+                <h3 style="font-size: 15px; margin-bottom: 12px; color: #333;">📊 数据统计</h3>
+                <div class="summary-grid">
+                    <div class="summary-item">
+                        <div class="summary-num" id="statToday">0</div>
+                        <div class="summary-label">今日打卡</div>
                     </div>
-
-                    <div class="form-group">
-                        <label for="userPhone">手机号 *</label>
-                        <input type="text" id="userPhone" placeholder="请输入您的手机号" required>
+                    <div class="summary-item">
+                        <div class="summary-num" id="statMonth">0</div>
+                        <div class="summary-label">本月打卡</div>
                     </div>
-
-                    <button class="btn btn-success" onclick="doCheckin()" id="checkinBtn">
-                        ✅ 签到打卡
-                    </button>
-
-                    <div class="location-info" id="locationInfo">
-                        <strong>📍 位置信息：</strong>
-                        <span id="locationText">正在获取位置...</span>
-                        <div id="locationCoords" class="location-coords"></div>
-                        <a id="mapLink" class="location-link" href="#" target="_blank" style="display:none;">
-                            🗺️ 在地图中查看位置
-                        </a>
-                    </div>
-
-                    <div class="status-display" id="todayStatus" style="display:none;">
-                        <h3 style="margin-bottom: 12px; color: #333; font-size: 15px;">📊 今日打卡记录</h3>
-                        <div class="status-item">
-                            <span class="status-label">姓名</span>
-                            <span class="status-value" id="statusName">-</span>
-                        </div>
-                        <div class="status-item">
-                            <span class="status-label">签到时间</span>
-                            <span class="status-value" id="statusCheckinTime">-</span>
-                        </div>
-                        <div class="status-item">
-                            <span class="status-label">签退时间</span>
-                            <span class="status-value" id="statusCheckoutTime">-</span>
-                        </div>
-                        <div class="status-item">
-                            <span class="status-label">打卡位置</span>
-                            <span class="status-value" id="statusLocation">-</span>
-                        </div>
-                        <a id="statusMapLink" class="location-link" href="#" target="_blank" style="display:none; margin-top: 10px;">
-                            🗺️ 在地图中查看
-                        </a>
-                        <button class="btn btn-danger" style="margin-top: 12px;" onclick="doCheckout()" id="checkoutBtn">
-                            🚪 签退
-                        </button>
+                    <div class="summary-item">
+                        <div class="summary-num" id="statTotal">0</div>
+                        <div class="summary-label">总打卡数</div>
                     </div>
                 </div>
             </div>
 
             <div class="card">
-                <h3 style="margin-bottom: 12px; font-size: 15px;">📋 今日打卡列表</h3>
-                <div class="table-container" id="todayTable"></div>
+                <h3 style="font-size: 15px; margin-bottom: 12px; color: #333;">📱 员工管理</h3>
+                <div class="form-group">
+                    <label>添加员工手机号</label>
+                    <input type="text" id="addPhone" placeholder="请输入手机号" />
+                </div>
+                <button class="btn btn-primary" onclick="addEmployee()">➕ 添加</button>
+                
+                <div class="whitelist-section">
+                    <h4 style="font-size: 14px; color: #666;">已登记员工</h4>
+                    <div class="whitelist-list" id="employeeList">
+                        <div class="empty-state">暂无登记员工</div>
+                    </div>
+                </div>
             </div>
-        </div>
 
-        <div id="adminTab" class="hidden">
             <div class="card">
-                <h2 style="margin-bottom: 15px; font-size: 16px;">🔐 管理员登录</h2>
-                <div class="admin-login">
-                    <div class="form-group">
-                        <label for="adminPassword">管理员密码</label>
-                        <input type="password" id="adminPassword" placeholder="请输入管理员密码">
-                    </div>
-                    <button class="btn btn-primary" onclick="adminLogin()">登录</button>
-                    <p style="margin-top: 12px; color: #718096; font-size: 13px;">
-                        默认密码：admin123
-                    </p>
-                </div>
-            </div>
-
-            <div id="adminPanel" class="hidden">
-                <div class="card">
-                    <h2 style="margin-bottom: 12px; font-size: 16px;">📊 数据统计</h2>
-                    <div class="summary-cards">
-                        <div class="summary-card">
-                            <h4>今日</h4>
-                            <div class="value" id="todayCheckinCount">0</div>
-                        </div>
-                        <div class="summary-card">
-                            <h4>本月</h4>
-                            <div class="value" id="monthCheckinCount">0</div>
-                        </div>
-                        <div class="summary-card">
-                            <h4>总计</h4>
-                            <div class="value" id="totalCheckinCount">0</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h3 style="margin-bottom: 12px; font-size: 15px;">📋 打卡记录查询</h3>
-                    <div class="filter-bar">
-                        <div class="filter-row">
-                            <input type="month" id="filterMonth">
-                            <input type="text" id="filterName" placeholder="输入姓名">
-                        </div>
-                        <button class="btn btn-primary" onclick="loadRecords()">🔍 查询</button>
-                    </div>
-
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>日期</th>
-                                    <th>姓名</th>
-                                    <th>签到</th>
-                                    <th>签退</th>
-                                    <th>地址</th>
-                                    <th>经纬度</th>
-                                </tr>
-                            </thead>
-                            <tbody id="recordsBody"></tbody>
-                        </table>
-                    </div>
-
-                    <div class="export-section">
-                        <h3>📤 数据导出</h3>
-                        <p style="color: #718096; margin-bottom: 10px; font-size: 13px;">导出Excel文件，方便在Excel中查看和编辑</p>
-                        <div class="export-buttons">
-                            <button class="btn btn-success btn-export" onclick="exportCurrentMonth()">📥 当月</button>
-                            <button class="btn btn-secondary btn-export" onclick="exportAll()">📥 全部</button>
-                            <button class="btn btn-danger btn-export" onclick="clearAllRecords()">🗑️ 清空</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h3 style="margin-bottom: 12px; font-size: 15px;">📱 手机号白名单管理</h3>
-                    <p style="color: #718096; margin-bottom: 10px; font-size: 13px;">只有在白名单中的手机号才能进行打卡</p>
-                    <div class="form-group">
-                        <input type="text" id="whitelistPhone" placeholder="请输入手机号" style="margin-bottom: 10px;">
-                    </div>
-                    <button class="btn btn-primary" onclick="addWhitelist()">➕ 添加手机号</button>
-                    
-                    <div class="whitelist-section" style="margin-top: 15px;">
-                        <h4 style="margin-bottom: 10px; font-size: 14px;">已登记的手机号</h4>
-                        <div class="whitelist-list" id="whitelistList">
-                            <div class="empty-state">暂无登记的手机号</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <button class="btn btn-secondary" onclick="adminLogout()">退出登录</button>
-                </div>
+                <button class="btn btn-secondary" onclick="adminLogout()">🚪 退出登录</button>
             </div>
         </div>
     </div>
@@ -675,548 +488,514 @@
     <script>
         let currentLocation = null;
         let currentAddress = '';
+        let locationSource = ''; // 'auto' | 'manual' | ''
 
         function init() {
-            updateClock();
-            setInterval(updateClock, 1000);
+            updateTime();
+            setInterval(updateTime, 1000);
             getLocation();
-            checkTodayStatus();
             loadTodayRecords();
             document.getElementById('filterMonth').value = getCurrentMonth();
+            
+            if (localStorage.getItem('adminLoggedIn') === 'true') {
+                showAdminPanel();
+            }
         }
 
-        function updateClock() {
+        function updateTime() {
             const now = new Date();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-            document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds}`;
+            const h = String(now.getHours()).padStart(2, '0');
+            const m = String(now.getMinutes()).padStart(2, '0');
+            const s = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('clock').textContent = `${h}:${m}:${s}`;
 
-            const weekDays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
-            const dateStr = `${now.getFullYear()}年${now.getMonth() + 1}月${now.getDate()}日 ${weekDays[now.getDay()]}`;
-            document.getElementById('dateDisplay').textContent = dateStr;
+            const weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+            document.getElementById('dateText').textContent = 
+                `${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日 ${weekDays[now.getDay()]}`;
         }
 
         function getLocation() {
-            const locationInfo = document.getElementById('locationInfo');
-            const locationText = document.getElementById('locationText');
-            const locationCoords = document.getElementById('locationCoords');
-            const mapLink = document.getElementById('mapLink');
-
             if (!navigator.geolocation) {
-                locationText.textContent = '浏览器不支持定位功能';
-                locationInfo.className = 'location-info error';
+                tryIPLocation();
                 return;
             }
 
-            locationText.textContent = '正在获取位置...';
-            mapLink.style.display = 'none';
+            document.getElementById('locationCard').style.background = '#fffbe6';
+            document.getElementById('locationCard').style.borderColor = '#ffe58f';
+            document.getElementById('locationText').textContent = '正在快速获取位置...';
 
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const lat = position.coords.latitude.toFixed(6);
-                    const lon = position.coords.longitude.toFixed(6);
-                    currentLocation = `${lat},${lon}`;
-                    locationCoords.textContent = `纬度: ${lat} 经度: ${lon}`;
+            let quickSuccess = false;
+            
+            navigator.geolocation.getCurrentPosition(pos => {
+                quickSuccess = true;
+                processPosition(pos);
+            }, err => {
+                if (!quickSuccess) {
+                    tryIPLocation();
+                }
+            }, { enableHighAccuracy: false, timeout: 5000, maximumAge: 300000 });
 
-                    const mapsUrl = `https://maps.google.com?q=${lat},${lon}`;
-                    mapLink.href = mapsUrl;
-                    mapLink.style.display = 'inline-block';
+            navigator.geolocation.getCurrentPosition(pos => {
+                if (!quickSuccess) {
+                    processPosition(pos);
+                }
+            }, () => {}, { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 });
+        }
 
-                    locationInfo.className = 'location-info success';
+        function processPosition(pos) {
+            const lat = pos.coords.latitude.toFixed(6);
+            const lon = pos.coords.longitude.toFixed(6);
+            currentLocation = `${lat},${lon}`;
+            locationSource = 'auto';
+            document.getElementById('locationCoords').textContent = `📍 ${lat}, ${lon} (自动定位)`;
+            document.getElementById('mapLink').href = `https://map.baidu.com/search/${lat},${lon}`;
+            document.getElementById('mapLink').style.display = 'inline-block';
+            
+            document.getElementById('locationCard').style.background = '#e6f7ff';
+            document.getElementById('locationCard').style.borderColor = '#91d5ff';
+            
+            getAddress(lat, lon);
+        }
 
-                    getAddress(lat, lon);
-                },
-                (error) => {
-                    let msg = '获取位置失败';
-                    switch(error.code) {
-                        case 1: msg = '请允许定位权限'; break;
-                        case 2: msg = '无法获取位置'; break;
-                        case 3: msg = '定位超时'; break;
-                    }
-                    locationText.textContent = msg;
-                    locationCoords.textContent = '';
-                    currentLocation = '未知位置';
-                    currentAddress = '';
-                    locationInfo.className = 'location-info error';
-                },
-                { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 }
-            );
+        function tryIPLocation() {
+            document.getElementById('locationText').textContent = '尝试通过网络定位...';
+            fetch('https://ipapi.co/json/')
+            .then(res => res.json())
+            .then(data => {
+                if (data.latitude && data.longitude) {
+                    currentLocation = `${data.latitude.toFixed(4)},${data.longitude.toFixed(4)}`;
+                    locationSource = 'auto';
+                    document.getElementById('locationCoords').textContent = `📍 ${data.latitude.toFixed(4)}, ${data.longitude.toFixed(4)} (网络定位)`;
+                    document.getElementById('mapLink').href = `https://map.baidu.com/search/${data.latitude},${data.longitude}`;
+                    document.getElementById('mapLink').style.display = 'inline-block';
+                    document.getElementById('locationCard').style.background = '#e6f7ff';
+                    document.getElementById('locationCard').style.borderColor = '#91d5ff';
+                    
+                    currentAddress = data.city ? `${data.city} ${data.region || ''}` : '位置获取成功';
+                    document.getElementById('locationText').textContent = currentAddress;
+                } else {
+                    tryAlternativeIPLocation();
+                }
+            }).catch(() => {
+                tryAlternativeIPLocation();
+            });
+        }
+
+        function tryAlternativeIPLocation() {
+            fetch('https://api.ipify.org?format=json')
+            .then(res => res.json())
+            .then(data => {
+                if (data.ip) {
+                    fetch(`https://ipgeolocation.abstractapi.com/v1/?api_key=70b704e372e748e09a625ccb4d99e522&ip_address=${data.ip}`)
+                    .then(res => res.json())
+                    .then(loc => {
+                        if (loc.latitude && loc.longitude) {
+                            currentLocation = `${loc.latitude.toFixed(4)},${loc.longitude.toFixed(4)}`;
+                            locationSource = 'auto';
+                            document.getElementById('locationCoords').textContent = `📍 ${loc.latitude.toFixed(4)}, ${loc.longitude.toFixed(4)} (网络定位)`;
+                            document.getElementById('mapLink').href = `https://map.baidu.com/search/${loc.latitude},${loc.longitude}`;
+                            document.getElementById('mapLink').style.display = 'inline-block';
+                            document.getElementById('locationCard').style.background = '#e6f7ff';
+                            document.getElementById('locationCard').style.borderColor = '#91d5ff';
+                            
+                            currentAddress = loc.city ? `${loc.city} ${loc.region || ''}` : '位置获取成功';
+                            document.getElementById('locationText').textContent = currentAddress;
+                        } else {
+                            showLocationOptions();
+                        }
+                    }).catch(() => showLocationOptions());
+                } else {
+                    showLocationOptions();
+                }
+            }).catch(() => {
+                showLocationOptions();
+            });
+        }
+
+        function showLocationOptions() {
+            currentLocation = '未知位置';
+            currentAddress = '未知位置';
+            document.getElementById('locationText').textContent = '无法自动获取位置';
+            document.getElementById('locationCoords').textContent = '';
+            document.getElementById('mapLink').style.display = 'none';
+            document.getElementById('locationCard').style.background = '#fff2f0';
+            document.getElementById('locationCard').style.borderColor = '#ffccc7';
+            
+            document.getElementById('locationCard').innerHTML = `
+                <div class="location-title">📍 位置获取失败</div>
+                <div class="location-text">无法自动获取位置，请选择以下方式：</div>
+                <button class="btn btn-secondary" style="margin-top: 12px; width:100%;" onclick="getLocation()">🔄 重新获取位置</button>
+                <button class="btn btn-primary" style="margin-top: 8px; width:100%;" onclick="showManualInput()">📍 手动输入位置</button>
+            `;
+        }
+
+        function showManualInput() {
+            document.getElementById('locationCard').innerHTML = `
+                <div class="location-title">📍 手动输入打卡地点</div>
+                <input type="text" id="manualAddressInput" placeholder="请输入打卡地点（如：城南办事处）" style="width:100%; padding:12px; margin:10px 0; border:1px solid #e8e8e8; border-radius:8px; font-size:15px;" />
+                <button class="btn btn-primary" style="width:100%;" onclick="saveManualLocation()">✓ 确认位置</button>
+                <button class="btn btn-secondary" style="width:100%; margin-top:8px;" onclick="cancelManualInput()">✕ 取消</button>
+            `;
+        }
+
+        function saveManualLocation() {
+            const address = document.getElementById('manualAddressInput').value.trim();
+            if (!address) {
+                showMsg('请输入打卡地点', 'error');
+                return;
+            }
+            currentLocation = '手动输入';
+            currentAddress = address;
+            locationSource = 'manual';
+            document.getElementById('locationCard').innerHTML = `
+                <div class="location-title">⚠️ 手动输入位置</div>
+                <div style="color:#faad14; font-size:12px; margin-bottom:8px;">⚠️ 此位置为手动输入，将被标记审核</div>
+                <div class="location-text">${address}</div>
+                <div class="location-coords">📍 手动输入</div>
+                <button class="btn btn-secondary" style="margin-top:10px; width:100%;" onclick="getLocation()">🔄 重新获取位置</button>
+            `;
+            document.getElementById('locationCard').style.background = '#fffbe6';
+            document.getElementById('locationCard').style.borderColor = '#ffe58f';
+            showMsg('位置已设置（将被标记审核）', 'info');
+        }
+
+        function cancelManualInput() {
+            getLocation();
         }
 
         function getAddress(lat, lon) {
-            const locationText = document.getElementById('locationText');
-            const locationInfo = document.getElementById('locationInfo');
-            
-            const url = `https://api.map.baidu.com/reverse_geocoding/v3/?ak=E4805d16520de693a3fe707cdc962045&output=json&coordtype=wgs84ll&location=${lat},${lon}`;
-            
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 0 && data.result) {
-                        currentAddress = data.result.formatted_address || data.result.addressComponent.district || '位置获取成功';
-                        locationText.textContent = currentAddress;
-                    } else {
-                        currentAddress = '位置获取成功';
-                        locationText.textContent = '位置获取成功';
-                    }
-                })
-                .catch(error => {
+            fetch(`https://api.map.baidu.com/reverse_geocoding/v3/?ak=E4805d16520de693a3fe707cdc962045&output=json&coordtype=wgs84ll&location=${lat},${lon}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 0 && data.result) {
+                    currentAddress = data.result.formatted_address || '位置获取成功';
+                } else {
                     currentAddress = '位置获取成功';
-                    locationText.textContent = '位置获取成功';
-                });
+                }
+                document.getElementById('locationText').textContent = currentAddress;
+            }).catch(() => {
+                currentAddress = '位置获取成功';
+                document.getElementById('locationText').textContent = currentAddress;
+            });
         }
 
-        function getMapLink(lat, lon) {
-            if (!lat || !lon) return '#';
-            const coords = lat + ',' + lon;
-            const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-            if (isMobile) {
-                return `geo:${coords}?q=${coords}`;
-            }
-            return `https://maps.google.com?q=${coords}`;
-        }
-
-        function getTodayDate() {
+        function getToday() {
             const now = new Date();
-            return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+            return `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
         }
 
         function getCurrentMonth() {
             const now = new Date();
-            return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+            return `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2, '0')}`;
         }
 
-        function getRecords() {
-            return JSON.parse(localStorage.getItem('checkinRecords') || '[]');
-        }
+        function getRecords() { return JSON.parse(localStorage.getItem('checkinRecords') || '[]'); }
+        function saveRecords(records) { localStorage.setItem('checkinRecords', JSON.stringify(records)); }
+        function getEmployees() { return JSON.parse(localStorage.getItem('employees') || '[]'); }
+        function saveEmployees(emps) { localStorage.setItem('employees', JSON.stringify(emps)); }
 
-        function saveRecords(records) {
-            localStorage.setItem('checkinRecords', JSON.stringify(records));
-        }
+        function handleCheckin() {
+            const name = document.getElementById('nameInput').value.trim();
+            const phone = document.getElementById('phoneInput').value.trim();
 
-        function getWhitelist() {
-            return JSON.parse(localStorage.getItem('phoneWhitelist') || '[]');
-        }
+            if (!name) { showMsg('请输入姓名', 'error'); return; }
+            if (!phone) { showMsg('请输入手机号', 'error'); return; }
+            if (!/^1[3-9]\d{9}$/.test(phone)) { showMsg('手机号格式错误', 'error'); return; }
 
-        function saveWhitelist(whitelist) {
-            localStorage.setItem('phoneWhitelist', JSON.stringify(whitelist));
-        }
-
-        function addWhitelist() {
-            const phoneInput = document.getElementById('whitelistPhone');
-            const phone = phoneInput.value.trim();
-            
-            if (!phone) {
-                showMessage('请输入手机号！', 'error');
+            if (!currentLocation || currentLocation === '未知位置') {
+                showMsg('请先获取打卡位置', 'error');
                 return;
             }
 
-            const phoneRegex = /^1[3-9]\d{9}$/;
-            if (!phoneRegex.test(phone)) {
-                showMessage('请输入正确的手机号格式！', 'error');
-                return;
-            }
-
-            const whitelist = getWhitelist();
-            if (whitelist.includes(phone)) {
-                showMessage('该手机号已在白名单中！', 'info');
-                return;
-            }
-
-            whitelist.push(phone);
-            saveWhitelist(whitelist);
-            loadWhitelist();
-            phoneInput.value = '';
-            showMessage('添加成功！', 'success');
-        }
-
-        function removeWhitelist(phone) {
-            const whitelist = getWhitelist();
-            const index = whitelist.indexOf(phone);
-            if (index > -1) {
-                whitelist.splice(index, 1);
-                saveWhitelist(whitelist);
-                loadWhitelist();
-                showMessage('删除成功！', 'success');
-            }
-        }
-
-        function loadWhitelist() {
-            const whitelist = getWhitelist();
-            const container = document.getElementById('whitelistList');
-            
-            if (whitelist.length === 0) {
-                container.innerHTML = '<div class="empty-state">暂无登记的手机号</div>';
-                return;
-            }
-
-            let html = '';
-            whitelist.forEach(phone => {
-                html += `<div class="whitelist-item"><span class="phone">${phone}</span><button class="btn-remove" onclick="removeWhitelist('${phone}')">删除</button></div>`;
-            });
-            container.innerHTML = html;
-        }
-
-        function doCheckin() {
-            const name = document.getElementById('userName').value.trim();
-            const phone = document.getElementById('userPhone').value.trim();
-            
-            if (!name) {
-                showMessage('请输入姓名！', 'error');
-                return;
-            }
-
-            if (!phone) {
-                showMessage('请输入手机号！', 'error');
-                return;
-            }
-
-            const phoneRegex = /^1[3-9]\d{9}$/;
-            if (!phoneRegex.test(phone)) {
-                showMessage('请输入正确的手机号格式！', 'error');
-                return;
-            }
-
-            const whitelist = getWhitelist();
-            if (!whitelist.includes(phone)) {
-                showMessage('您的手机号未登记，请联系管理员！', 'error');
+            const emps = getEmployees();
+            if (emps.length > 0 && !emps.includes(phone)) {
+                showMsg('该手机号未登记', 'error');
                 return;
             }
 
             const records = getRecords();
-            const today = getTodayDate();
+            const today = getToday();
             const now = new Date();
-            const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+            const time = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
 
-            const todayRecord = records.find(r => r.name === name && r.date === today);
-            if (todayRecord && todayRecord.checkinTime) {
-                showMessage('您今日已签到！', 'info');
+            const existing = records.find(r => r.name === name && r.date === today);
+            if (existing && existing.checkin) {
+                showMsg('今日已签到', 'info');
                 return;
             }
 
-            const record = {
-                id: Date.now(),
-                name: name,
-                date: today,
-                checkinTime: timeStr,
-                checkoutTime: '',
-                location: currentLocation || '未知位置',
-                address: currentAddress || '',
-                timestamp: now.getTime()
-            };
-
-            if (todayRecord) {
-                todayRecord.checkinTime = timeStr;
-                todayRecord.location = currentLocation || '未知位置';
-                todayRecord.address = currentAddress || '';
+            if (existing) {
+                existing.checkin = time;
+                existing.location = currentLocation;
+                existing.address = currentAddress;
+                existing.locationSource = locationSource;
             } else {
-                records.push(record);
+                records.push({
+                    id: Date.now(),
+                    name, phone, date: today,
+                    checkin: time, checkout: '',
+                    location: currentLocation,
+                    address: currentAddress,
+                    locationSource: locationSource
+                });
             }
 
             saveRecords(records);
-            showMessage('签到成功！', 'success');
-            checkTodayStatus();
+            showMsg('签到成功', 'success');
             loadTodayRecords();
-            document.getElementById('userName').value = '';
+            showTodayStatus(name);
+            document.getElementById('nameInput').value = '';
+            document.getElementById('phoneInput').value = '';
         }
 
-        function doCheckout() {
+        function handleCheckout() {
             const name = document.getElementById('statusName').textContent;
-            if (!name || name === '-') {
-                showMessage('您还未签到！', 'error');
-                return;
-            }
+            if (!name || name === '-') { showMsg('请先签到', 'error'); return; }
 
             const records = getRecords();
-            const today = getTodayDate();
+            const today = getToday();
             const now = new Date();
-            const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+            const time = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
 
             const record = records.find(r => r.name === name && r.date === today);
             if (record) {
-                record.checkoutTime = timeStr;
+                record.checkout = time;
                 saveRecords(records);
-                showMessage('签退成功！', 'success');
-                checkTodayStatus();
+                showMsg('签退成功', 'success');
                 loadTodayRecords();
+                showTodayStatus(name);
             }
         }
 
-        function checkTodayStatus() {
-            const name = document.getElementById('userName').value.trim();
-            if (!name) {
-                document.getElementById('todayStatus').style.display = 'none';
-                return;
-            }
-
+        function showTodayStatus(name) {
             const records = getRecords();
-            const today = getTodayDate();
+            const today = getToday();
             const record = records.find(r => r.name === name && r.date === today);
 
             if (record) {
-                document.getElementById('todayStatus').style.display = 'block';
+                document.getElementById('statusCard').style.display = 'block';
                 document.getElementById('statusName').textContent = record.name;
-                document.getElementById('statusCheckinTime').textContent = record.checkinTime || '-';
-                document.getElementById('statusCheckoutTime').textContent = record.checkoutTime || '-';
+                document.getElementById('statusCheckin').textContent = record.checkin || '-';
+                document.getElementById('statusCheckout').textContent = record.checkout || '-';
+                document.getElementById('statusLocation').textContent = record.address || record.location || '-';
 
-                const locationText = record.location || '-';
-                document.getElementById('statusLocation').textContent = locationText;
-
-                const statusMapLink = document.getElementById('statusMapLink');
-                if (locationText && locationText !== '-' && locationText !== '未知位置') {
-                    const parts = locationText.split(',');
-                    if (parts.length === 2) {
-                        const lat = parseFloat(parts[0].trim());
-                        const lon = parseFloat(parts[1].trim());
-                        if (!isNaN(lat) && !isNaN(lon)) {
-                            statusMapLink.href = getMapLink(lat, lon);
-                            statusMapLink.style.display = 'inline-block';
-                        } else {
-                            statusMapLink.style.display = 'none';
-                        }
-                    } else {
-                        statusMapLink.style.display = 'none';
-                    }
+                const btn = document.getElementById('checkoutBtn');
+                if (record.checkout) {
+                    btn.textContent = '✅ 已签退';
+                    btn.disabled = true;
+                    document.getElementById('checkinBtn').textContent = '✅ 今日完成';
+                    document.getElementById('checkinBtn').disabled = true;
                 } else {
-                    statusMapLink.style.display = 'none';
-                }
-
-                const checkoutBtn = document.getElementById('checkoutBtn');
-                const checkinBtn = document.getElementById('checkinBtn');
-                if (record.checkoutTime) {
-                    checkoutBtn.textContent = '✅ 已签退';
-                    checkoutBtn.disabled = true;
-                    checkinBtn.textContent = '✅ 今日完成';
-                    checkinBtn.disabled = true;
-                } else {
-                    checkoutBtn.textContent = '🚪 签退';
-                    checkoutBtn.disabled = false;
-                    checkinBtn.textContent = '✅ 已签到';
-                    checkinBtn.disabled = true;
+                    btn.textContent = '🚪 签退';
+                    btn.disabled = false;
+                    document.getElementById('checkinBtn').textContent = '✅ 已签到';
+                    document.getElementById('checkinBtn').disabled = true;
                 }
             } else {
-                document.getElementById('todayStatus').style.display = 'none';
-                document.getElementById('checkinBtn').textContent = '✅ 签到打卡';
+                document.getElementById('statusCard').style.display = 'none';
+                document.getElementById('checkinBtn').textContent = '✅ 签到';
                 document.getElementById('checkinBtn').disabled = false;
             }
         }
 
         function loadTodayRecords() {
-            const records = getRecords();
-            const today = getTodayDate();
-            const todayRecords = records.filter(r => r.date === today).sort((a, b) => b.timestamp - a.timestamp);
+            const records = getRecords().filter(r => r.date === getToday()).sort((a, b) => b.id - a.id);
+            const container = document.getElementById('todayRecords');
 
-            const container = document.getElementById('todayTable');
-            if (todayRecords.length === 0) {
+            if (records.length === 0) {
                 container.innerHTML = '<div class="empty-state">今日暂无打卡记录</div>';
                 return;
             }
 
-            let html = `<table><thead><tr><th>姓名</th><th>签到</th><th>签退</th><th>地址</th><th>经纬度</th></tr></thead><tbody>`;
-            todayRecords.forEach(r => {
-                let locationHtml = r.location || '-';
-                const addressHtml = r.address || '-';
-                if (r.location && r.location !== '未知位置') {
-                    const parts = r.location.split(',');
-                    if (parts.length === 2) {
-                        const lat = parseFloat(parts[0].trim());
-                        const lon = parseFloat(parts[1].trim());
-                        if (!isNaN(lat) && !isNaN(lon)) {
-                            locationHtml = `<div>${lat}, ${lon}</div><a href="${getMapLink(lat, lon)}" target="_blank" style="color:#1890ff;font-size:12px;">🗺️ 查看地图</a>`;
-                        }
-                    }
-                }
-                html += `<tr><td>${escapeHtml(r.name)}</td><td>${r.checkinTime || '-'}</td><td>${r.checkoutTime || '-'}</td><td style="max-width:120px;word-break:break-all;">${addressHtml}</td><td style="white-space:nowrap;">${locationHtml}</td></tr>`;
+            let html = '<table><thead><tr><th>姓名</th><th>签到</th><th>签退</th><th>地点</th><th>状态</th></tr></thead><tbody>';
+            records.forEach(r => {
+                const source = r.locationSource === 'manual' ? '<span style="color:#faad14">⚠️ 手动</span>' : '<span style="color:#52c41a">✓ 自动</span>';
+                html += `<tr><td>${r.name}</td><td>${r.checkin || '-'}</td><td>${r.checkout || '-'}</td><td style="max-width:80px;word-break:break-all;">${r.address || '-'}</td><td>${source}</td></tr>`;
             });
             html += '</tbody></table>';
             container.innerHTML = html;
         }
 
-        function showTab(tab) {
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById('checkinTab').classList.add('hidden');
-            document.getElementById('adminTab').classList.add('hidden');
-
-            if (tab === 'checkin') {
-                document.querySelectorAll('.tab-btn')[0].classList.add('active');
-                document.getElementById('checkinTab').classList.remove('hidden');
-                loadTodayRecords();
-            } else {
-                document.querySelectorAll('.tab-btn')[1].classList.add('active');
-                document.getElementById('adminTab').classList.remove('hidden');
+        function getMapUrl(location, address) {
+            if (!location || location === '未知位置') return '';
+            if (location === '手动输入' && address) {
+                return `https://map.baidu.com/search/${encodeURIComponent(address)}`;
             }
-        }
-
-        function adminLogin() {
-            const password = document.getElementById('adminPassword').value;
-            if (password === 'admin123') {
-                localStorage.setItem('adminLoggedIn', 'true');
-                document.querySelector('.admin-login').classList.add('hidden');
-                document.getElementById('adminPanel').classList.remove('hidden');
-                loadRecords();
-                loadStats();
-                loadWhitelist();
-                showMessage('登录成功！', 'success');
-            } else {
-                showMessage('密码错误！', 'error');
+            if (location.includes(',')) {
+                return `https://map.baidu.com/search/${location}`;
             }
-        }
-
-        function adminLogout() {
-            localStorage.removeItem('adminLoggedIn');
-            document.getElementById('adminPassword').value = '';
-            document.querySelector('.admin-login').classList.remove('hidden');
-            document.getElementById('adminPanel').classList.add('hidden');
-            showMessage('已退出登录', 'info');
-        }
-
-        function loadStats() {
-            const records = getRecords();
-            const today = getTodayDate();
-            const currentMonth = getCurrentMonth();
-
-            document.getElementById('todayCheckinCount').textContent = records.filter(r => r.date === today && r.checkinTime).length;
-            document.getElementById('monthCheckinCount').textContent = records.filter(r => r.date.startsWith(currentMonth) && r.checkinTime).length;
-            document.getElementById('totalCheckinCount').textContent = records.filter(r => r.checkinTime).length;
+            return '';
         }
 
         function loadRecords() {
-            if (localStorage.getItem('adminLoggedIn') !== 'true') return;
+            const records = getRecords().filter(r => r.checkin);
+            const month = document.getElementById('filterMonth').value;
+            const name = document.getElementById('filterName').value.trim().toLowerCase();
 
-            const records = getRecords();
-            const filterMonth = document.getElementById('filterMonth').value;
-            const filterName = document.getElementById('filterName').value.trim().toLowerCase();
+            let filtered = records;
+            if (month) filtered = filtered.filter(r => r.date.startsWith(month));
+            if (name) filtered = filtered.filter(r => r.name.toLowerCase().includes(name));
+            filtered.sort((a, b) => new Date(b.date + ' ' + b.checkin) - new Date(a.date + ' ' + a.checkin));
 
-            let filtered = records.filter(r => r.checkinTime);
-
-            if (filterMonth) {
-                filtered = filtered.filter(r => r.date.startsWith(filterMonth));
-            }
-
-            if (filterName) {
-                filtered = filtered.filter(r => r.name.toLowerCase().includes(filterName));
-            }
-
-            filtered.sort((a, b) => new Date(b.date + ' ' + b.checkinTime) - new Date(a.date + ' ' + a.checkinTime));
-
-            const tbody = document.getElementById('recordsBody');
+            const tbody = document.getElementById('recordsTable');
             if (filtered.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:30px;color:#718096;">暂无记录</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" class="empty-state">暂无记录</td></tr>';
                 return;
             }
 
             let html = '';
             filtered.forEach(r => {
-                let locationHtml = r.location || '-';
-                const addressHtml = r.address || '-';
-                if (r.location && r.location !== '未知位置') {
-                    const parts = r.location.split(',');
-                    if (parts.length === 2) {
-                        const lat = parseFloat(parts[0].trim());
-                        const lon = parseFloat(parts[1].trim());
-                        if (!isNaN(lat) && !isNaN(lon)) {
-                            locationHtml = `<div>${lat}, ${lon}</div><a href="${getMapLink(lat, lon)}" target="_blank" style="color:#1890ff;font-size:12px;">🗺️ 查看地图</a>`;
-                        }
-                    }
-                }
-                html += `<tr><td>${r.date}</td><td>${escapeHtml(r.name)}</td><td>${r.checkinTime || '-'}</td><td>${r.checkoutTime || '-'}</td><td style="max-width:150px;word-break:break-all;">${addressHtml}</td><td style="white-space:nowrap;">${locationHtml}</td></tr>`;
+                const source = r.locationSource === 'manual' ? '⚠️ 手动' : '✓ 自动';
+                html += `<tr><td>${r.date}</td><td>${r.name}</td><td>${r.checkin || '-'}</td><td>${r.checkout || '-'}</td><td style="max-width:100px;word-break:break-all;">${r.address || r.location || '-'}</td><td>${source}</td></tr>`;
             });
             tbody.innerHTML = html;
-            loadStats();
         }
 
-        function exportCurrentMonth() {
+        function exportMonth() {
             const month = document.getElementById('filterMonth').value;
-            if (!month) {
-                showMessage('请先选择要导出的月份！', 'error');
-                return;
-            }
+            if (!month) { showMsg('请选择月份', 'error'); return; }
 
-            const records = getRecords();
-            const monthRecords = records.filter(r => r.date.startsWith(month) && r.checkinTime);
+            const records = getRecords().filter(r => r.checkin && r.date.startsWith(month));
+            if (records.length === 0) { showMsg('该月无数据', 'error'); return; }
 
-            if (monthRecords.length === 0) {
-                showMessage('该月份暂无数据！', 'error');
-                return;
-            }
-
-            const data = monthRecords.map(r => ({
-                '日期': r.date,
-                '姓名': r.name,
-                '签到时间': r.checkinTime,
-                '签退时间': r.checkoutTime || '',
-                '地址': r.address || '',
-                '经纬度': r.location || ''
-            }));
+            const data = records.map(r => {
+                const mapUrl = getMapUrl(r.location, r.address);
+                return {
+                    '日期': r.date, '姓名': r.name, '签到': r.checkin, 
+                    '签退': r.checkout || '', '打卡地点': r.address || r.location || '',
+                    '地图链接': mapUrl,
+                    '定位方式': r.locationSource === 'manual' ? '⚠️ 手动输入' : '✓ 自动定位'
+                };
+            });
 
             const ws = XLSX.utils.json_to_sheet(data);
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, '打卡记录');
             XLSX.writeFile(wb, `打卡记录_${month.replace('-', '年')}月.xlsx`);
-            showMessage('导出成功！', 'success');
+            showMsg('导出成功', 'success');
         }
 
         function exportAll() {
-            const records = getRecords().filter(r => r.checkinTime);
+            const records = getRecords().filter(r => r.checkin);
+            if (records.length === 0) { showMsg('暂无数据', 'error'); return; }
 
-            if (records.length === 0) {
-                showMessage('暂无数据！', 'error');
-                return;
-            }
-
-            const data = records.map(r => ({
-                '日期': r.date,
-                '姓名': r.name,
-                '签到时间': r.checkinTime,
-                '签退时间': r.checkoutTime || '',
-                '地址': r.address || '',
-                '经纬度': r.location || ''
-            }));
+            const data = records.map(r => {
+                const mapUrl = getMapUrl(r.location, r.address);
+                return {
+                    '日期': r.date, '姓名': r.name, '签到': r.checkin, 
+                    '签退': r.checkout || '', '打卡地点': r.address || r.location || '',
+                    '地图链接': mapUrl,
+                    '定位方式': r.locationSource === 'manual' ? '⚠️ 手动输入' : '✓ 自动定位'
+                };
+            });
 
             const ws = XLSX.utils.json_to_sheet(data);
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, '打卡记录');
-            XLSX.writeFile(wb, `打卡记录_全部.xlsx`);
-            showMessage('导出成功！', 'success');
+            XLSX.writeFile(wb, '打卡记录_全部.xlsx');
+            showMsg('导出成功', 'success');
         }
 
-        function clearAllRecords() {
-            if (!confirm('确定要清空所有打卡记录吗？此操作不可恢复！')) return;
+        function adminLogin() {
+            const pwd = document.getElementById('adminPwd').value;
+            if (pwd === 'admin123') {
+                localStorage.setItem('adminLoggedIn', 'true');
+                showAdminPanel();
+                showMsg('登录成功', 'success');
+            } else {
+                showMsg('密码错误', 'error');
+            }
+        }
 
-            localStorage.removeItem('checkinRecords');
-            loadRecords();
-            loadTodayRecords();
+        function showAdminPanel() {
+            document.getElementById('loginPanel').style.display = 'none';
+            document.getElementById('adminPanel').style.display = 'block';
             loadStats();
-            showMessage('所有记录已清空！', 'success');
+            loadEmployees();
         }
 
-        function showMessage(text, type) {
+        function adminLogout() {
+            localStorage.removeItem('adminLoggedIn');
+            document.getElementById('adminPwd').value = '';
+            document.getElementById('loginPanel').style.display = 'block';
+            document.getElementById('adminPanel').style.display = 'none';
+            showMsg('已退出', 'info');
+        }
+
+        function loadStats() {
+            const records = getRecords().filter(r => r.checkin);
+            const today = getToday();
+            const month = getCurrentMonth();
+
+            document.getElementById('statToday').textContent = records.filter(r => r.date === today).length;
+            document.getElementById('statMonth').textContent = records.filter(r => r.date.startsWith(month)).length;
+            document.getElementById('statTotal').textContent = records.length;
+        }
+
+        function addEmployee() {
+            const phone = document.getElementById('addPhone').value.trim();
+            if (!phone || !/^1[3-9]\d{9}$/.test(phone)) {
+                showMsg('请输入正确的手机号', 'error');
+                return;
+            }
+
+            const emps = getEmployees();
+            if (emps.includes(phone)) {
+                showMsg('该手机号已登记', 'info');
+                return;
+            }
+
+            emps.push(phone);
+            saveEmployees(emps);
+            loadEmployees();
+            document.getElementById('addPhone').value = '';
+            showMsg('添加成功', 'success');
+        }
+
+        function loadEmployees() {
+            const emps = getEmployees();
+            const container = document.getElementById('employeeList');
+
+            if (emps.length === 0) {
+                container.innerHTML = '<div class="empty-state">暂无登记员工</div>';
+                return;
+            }
+
+            let html = '';
+            emps.forEach(phone => {
+                html += `<div class="whitelist-item"><span class="whitelist-phone">${phone}</span><button class="btn-remove" onclick="removeEmployee('${phone}')">删除</button></div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function removeEmployee(phone) {
+            const emps = getEmployees().filter(p => p !== phone);
+            saveEmployees(emps);
+            loadEmployees();
+            showMsg('删除成功', 'success');
+        }
+
+        function showTab(tab) {
+            document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('[id$=Tab]').forEach(t => t.style.display = 'none');
+
+            document.querySelector(`[onclick="showTab('${tab}')"]`).classList.add('active');
+            document.getElementById(`${tab}Tab`).style.display = 'block';
+
+            if (tab === 'records') loadRecords();
+        }
+
+        function showMsg(text, type) {
             const msg = document.createElement('div');
             msg.className = `message ${type}`;
             msg.textContent = text;
             document.body.appendChild(msg);
-            setTimeout(() => msg.remove(), 3000);
+            setTimeout(() => msg.remove(), 2500);
         }
 
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        document.getElementById('userName').addEventListener('input', checkTodayStatus);
-        document.getElementById('adminPassword').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') adminLogin();
+        document.getElementById('nameInput').addEventListener('input', () => {
+            showTodayStatus(document.getElementById('nameInput').value.trim());
         });
-
-        if (localStorage.getItem('adminLoggedIn') === 'true') {
-            document.querySelector('.admin-login').classList.add('hidden');
-            document.getElementById('adminPanel').classList.remove('hidden');
-            loadRecords();
-            loadStats();
-            loadWhitelist();
-        }
 
         init();
     </script>
