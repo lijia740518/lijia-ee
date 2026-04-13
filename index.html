@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据填写与导出系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: #48bb78;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #38a169;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(72, 187, 120, 0.4);
+        }
+
+        .btn-danger {
+            background: #f56565;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #e53e3e;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(245, 101, 101, 0.4);
+        }
+
+        .btn-secondary {
+            background: #718096;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6b7d;
+            transform: translateY(-2px);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: #f7fafc;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 5px;
+        }
+
+        .action-btn.edit {
+            background: #ed8936;
+            color: white;
+        }
+
+        .action-btn.delete {
+            background: #f56565;
+            color: white;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #718096;
+            padding: 40px;
+            font-size: 18px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #718096;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 600px) {
+            .btn-container {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            table {
+                font-size: 14px;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📝 数据填写与导出系统</h1>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="totalCount">0</div>
+                <div class="stat-label">总记录数</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="todayCount">0</div>
+                <div class="stat-label">今日新增</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 style="margin-bottom: 20px; color: #333;">➕ 添加新数据</h2>
+            <form id="dataForm">
+                <div class="form-group">
+                    <label for="name">姓名 *</label>
+                    <input type="text" id="name" required placeholder="请输入姓名">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">电子邮箱</label>
+                    <input type="email" id="email" placeholder="请输入电子邮箱">
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">联系电话</label>
+                    <input type="tel" id="phone" placeholder="请输入联系电话">
+                </div>
+
+                <div class="form-group">
+                    <label for="category">类别</label>
+                    <select id="category">
+                        <option value="">请选择类别</option>
+                        <option value="信息咨询">信息咨询</option>
+                        <option value="业务申请">业务申请</option>
+                        <option value="投诉建议">投诉建议</option>
+                        <option value="其他">其他</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">描述内容</label>
+                    <textarea id="description" placeholder="请输入详细描述"></textarea>
+                </div>
+
+                <div class="btn-container">
+                    <button type="submit" class="btn btn-primary">💾 保存数据</button>
+                    <button type="reset" class="btn btn-secondary">🔄 重置表单</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="card">
+            <div class="btn-container" style="margin-bottom: 20px;">
+                <button class="btn btn-success" onclick="exportData()">📥 导出CSV</button>
+                <button class="btn btn-success" onclick="exportJSON()">📥 导出JSON</button>
+                <button class="btn btn-danger" onclick="clearAllData()">🗑️ 清空全部</button>
+            </div>
+
+            <h2 style="margin-bottom: 15px; color: #333;">📋 数据列表</h2>
+            <div id="dataList"></div>
+        </div>
+    </div>
+
+    <script>
+        let editingId = null;
+
+        document.getElementById('dataForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            saveData();
+        });
+
+        function saveData() {
+            const data = {
+                id: editingId || Date.now(),
+                name: document.getElementById('name').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
+                category: document.getElementById('category').value,
+                description: document.getElementById('description').value.trim(),
+                date: new Date().toISOString()
+            };
+
+            if (!data.name) {
+                alert('请输入姓名！');
+                return;
+            }
+
+            let dataList = JSON.parse(localStorage.getItem('formDataList') || '[]');
+
+            if (editingId) {
+                const index = dataList.findIndex(item => item.id === editingId);
+                if (index !== -1) {
+                    dataList[index] = data;
+                }
+                editingId = null;
+                showNotification('数据更新成功！');
+            } else {
+                dataList.push(data);
+                showNotification('数据保存成功！');
+            }
+
+            localStorage.setItem('formDataList', JSON.stringify(dataList));
+            document.getElementById('dataForm').reset();
+            renderDataList();
+            updateStats();
+        }
+
+        function renderDataList() {
+            const dataList = JSON.parse(localStorage.getItem('formDataList') || '[]');
+            const container = document.getElementById('dataList');
+
+            if (dataList.length === 0) {
+                container.innerHTML = '<div class="empty-message">暂无数据，请添加新数据</div>';
+                return;
+            }
+
+            const sortedData = dataList.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            let html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>姓名</th>
+                            <th>邮箱</th>
+                            <th>电话</th>
+                            <th>类别</th>
+                            <th>日期</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            sortedData.forEach(item => {
+                const date = new Date(item.date).toLocaleDateString('zh-CN');
+                html += `
+                    <tr>
+                        <td>${escapeHtml(item.name)}</td>
+                        <td>${escapeHtml(item.email) || '-'}</td>
+                        <td>${escapeHtml(item.phone) || '-'}</td>
+                        <td>${escapeHtml(item.category) || '-'}</td>
+                        <td>${date}</td>
+                        <td>
+                            <button class="action-btn edit" onclick="editData(${item.id})">编辑</button>
+                            <button class="action-btn delete" onclick="deleteData(${item.id})">删除</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        function editData(id) {
+            const dataList = JSON.parse(localStorage.getItem('formDataList') || '[]');
+            const data = dataList.find(item => item.id === id);
+
+            if (data) {
+                editingId = id;
+                document.getElementById('name').value = data.name;
+                document.getElementById('email').value = data.email;
+                document.getElementById('phone').value = data.phone;
+                document.getElementById('category').value = data.category;
+                document.getElementById('description').value = data.description;
+
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                showNotification('正在编辑数据...');
+            }
+        }
+
+        function deleteData(id) {
+            if (!confirm('确定要删除这条数据吗？')) return;
+
+            let dataList = JSON.parse(localStorage.getItem('formDataList') || '[]');
+            dataList = dataList.filter(item => item.id !== id);
+            localStorage.setItem('formDataList', JSON.stringify(dataList));
+
+            if (editingId === id) {
+                editingId = null;
+                document.getElementById('dataForm').reset();
+            }
+
+            showNotification('数据删除成功！');
+            renderDataList();
+            updateStats();
+        }
+
+        function clearAllData() {
+            const dataList = JSON.parse(localStorage.getItem('formDataList') || '[]');
+            if (dataList.length === 0) {
+                alert('没有数据可以清空！');
+                return;
+            }
+
+            if (!confirm('确定要清空所有数据吗？此操作不可恢复！')) return;
+
+            localStorage.removeItem('formDataList');
+            editingId = null;
+            document.getElementById('dataForm').reset();
+            showNotification('所有数据已清空！');
+            renderDataList();
+            updateStats();
+        }
+
+        function exportData() {
+            const dataList = JSON.parse(localStorage.getItem('formDataList') || '[]');
+            if (dataList.length === 0) {
+                alert('没有数据可以导出！');
+                return;
+            }
+
+            let csv = '\uFEFF';
+            csv += '姓名,电子邮箱,联系电话,类别,描述,日期\n';
+
+            dataList.forEach(item => {
+                const row = [
+                    item.name,
+                    item.email || '',
+                    item.phone || '',
+                    item.category || '',
+                    (item.description || '').replace(/"/g, '""'),
+                    new Date(item.date).toLocaleDateString('zh-CN')
+                ];
+                csv += row.map(field => `"${field}"`).join(',') + '\n';
+            });
+
+            downloadFile(csv, 'data_export.csv', 'text/csv;charset=utf-8');
+            showNotification('CSV 导出成功！');
+        }
+
+        function exportJSON() {
+            const dataList = JSON.parse(localStorage.getItem('formDataList') || '[]');
+            if (dataList.length === 0) {
+                alert('没有数据可以导出！');
+                return;
+            }
+
+            const json = JSON.stringify(dataList, null, 2);
+            downloadFile(json, 'data_export.json', 'application/json');
+            showNotification('JSON 导出成功！');
+        }
+
+        function downloadFile(content, filename, mimeType) {
+            const blob = new Blob([content], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function updateStats() {
+            const dataList = JSON.parse(localStorage.getItem('formDataList') || '[]');
+            const today = new Date().toDateString();
+            const todayCount = dataList.filter(item =>
+                new Date(item.date).toDateString() === today
+            ).length;
+
+            document.getElementById('totalCount').textContent = dataList.length;
+            document.getElementById('todayCount').textContent = todayCount;
+        }
+
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #48bb78;
+                color: white;
+                padding: 15px 25px;
+                border-radius: 8px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+                z-index: 1000;
+                animation: slideIn 0.3s ease;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 2000);
+        }
+
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        renderDataList();
+        updateStats();
+    </script>
+</body>
+</html>
