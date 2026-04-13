@@ -267,6 +267,63 @@
             font-size: 14px;
         }
 
+        .whitelist-section {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .whitelist-section h3 {
+            margin-bottom: 10px;
+            font-size: 15px;
+            color: #333;
+        }
+
+        .whitelist-list {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px;
+            background: #fafafa;
+        }
+
+        .whitelist-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .whitelist-item:last-child {
+            border-bottom: none;
+        }
+
+        .whitelist-item .phone {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .whitelist-item .name {
+            color: #666;
+            font-size: 13px;
+        }
+
+        .btn-remove {
+            background: #f56565;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .btn-remove:hover {
+            background: #e53e3e;
+        }
+
         .location-info.success {
             background: #f6ffed;
             border-color: #b7eb8f;
@@ -469,6 +526,11 @@
                         <input type="text" id="userName" placeholder="请输入您的姓名" required>
                     </div>
 
+                    <div class="form-group">
+                        <label for="userPhone">手机号 *</label>
+                        <input type="text" id="userPhone" placeholder="请输入您的手机号" required>
+                    </div>
+
                     <button class="btn btn-success" onclick="doCheckin()" id="checkinBtn">
                         ✅ 签到打卡
                     </button>
@@ -568,7 +630,8 @@
                                     <th>姓名</th>
                                     <th>签到</th>
                                     <th>签退</th>
-                                    <th>位置</th>
+                                    <th>地址</th>
+                                    <th>经纬度</th>
                                 </tr>
                             </thead>
                             <tbody id="recordsBody"></tbody>
@@ -587,6 +650,22 @@
                 </div>
 
                 <div class="card">
+                    <h3 style="margin-bottom: 12px; font-size: 15px;">📱 手机号白名单管理</h3>
+                    <p style="color: #718096; margin-bottom: 10px; font-size: 13px;">只有在白名单中的手机号才能进行打卡</p>
+                    <div class="form-group">
+                        <input type="text" id="whitelistPhone" placeholder="请输入手机号" style="margin-bottom: 10px;">
+                    </div>
+                    <button class="btn btn-primary" onclick="addWhitelist()">➕ 添加手机号</button>
+                    
+                    <div class="whitelist-section" style="margin-top: 15px;">
+                        <h4 style="margin-bottom: 10px; font-size: 14px;">已登记的手机号</h4>
+                        <div class="whitelist-list" id="whitelistList">
+                            <div class="empty-state">暂无登记的手机号</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
                     <button class="btn btn-secondary" onclick="adminLogout()">退出登录</button>
                 </div>
             </div>
@@ -595,6 +674,7 @@
 
     <script>
         let currentLocation = null;
+        let currentAddress = '';
 
         function init() {
             updateClock();
@@ -637,7 +717,6 @@
                     const lat = position.coords.latitude.toFixed(6);
                     const lon = position.coords.longitude.toFixed(6);
                     currentLocation = `${lat},${lon}`;
-                    locationText.textContent = '位置获取成功';
                     locationCoords.textContent = `纬度: ${lat} 经度: ${lon}`;
 
                     const mapsUrl = `https://maps.google.com?q=${lat},${lon}`;
@@ -645,6 +724,8 @@
                     mapLink.style.display = 'inline-block';
 
                     locationInfo.className = 'location-info success';
+
+                    getAddress(lat, lon);
                 },
                 (error) => {
                     let msg = '获取位置失败';
@@ -656,10 +737,34 @@
                     locationText.textContent = msg;
                     locationCoords.textContent = '';
                     currentLocation = '未知位置';
+                    currentAddress = '';
                     locationInfo.className = 'location-info error';
                 },
                 { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 }
             );
+        }
+
+        function getAddress(lat, lon) {
+            const locationText = document.getElementById('locationText');
+            const locationInfo = document.getElementById('locationInfo');
+            
+            const url = `https://api.map.baidu.com/reverse_geocoding/v3/?ak=E4805d16520de693a3fe707cdc962045&output=json&coordtype=wgs84ll&location=${lat},${lon}`;
+            
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 0 && data.result) {
+                        currentAddress = data.result.formatted_address || data.result.addressComponent.district || '位置获取成功';
+                        locationText.textContent = currentAddress;
+                    } else {
+                        currentAddress = '位置获取成功';
+                        locationText.textContent = '位置获取成功';
+                    }
+                })
+                .catch(error => {
+                    currentAddress = '位置获取成功';
+                    locationText.textContent = '位置获取成功';
+                });
         }
 
         function getMapLink(lat, lon) {
@@ -690,10 +795,92 @@
             localStorage.setItem('checkinRecords', JSON.stringify(records));
         }
 
+        function getWhitelist() {
+            return JSON.parse(localStorage.getItem('phoneWhitelist') || '[]');
+        }
+
+        function saveWhitelist(whitelist) {
+            localStorage.setItem('phoneWhitelist', JSON.stringify(whitelist));
+        }
+
+        function addWhitelist() {
+            const phoneInput = document.getElementById('whitelistPhone');
+            const phone = phoneInput.value.trim();
+            
+            if (!phone) {
+                showMessage('请输入手机号！', 'error');
+                return;
+            }
+
+            const phoneRegex = /^1[3-9]\d{9}$/;
+            if (!phoneRegex.test(phone)) {
+                showMessage('请输入正确的手机号格式！', 'error');
+                return;
+            }
+
+            const whitelist = getWhitelist();
+            if (whitelist.includes(phone)) {
+                showMessage('该手机号已在白名单中！', 'info');
+                return;
+            }
+
+            whitelist.push(phone);
+            saveWhitelist(whitelist);
+            loadWhitelist();
+            phoneInput.value = '';
+            showMessage('添加成功！', 'success');
+        }
+
+        function removeWhitelist(phone) {
+            const whitelist = getWhitelist();
+            const index = whitelist.indexOf(phone);
+            if (index > -1) {
+                whitelist.splice(index, 1);
+                saveWhitelist(whitelist);
+                loadWhitelist();
+                showMessage('删除成功！', 'success');
+            }
+        }
+
+        function loadWhitelist() {
+            const whitelist = getWhitelist();
+            const container = document.getElementById('whitelistList');
+            
+            if (whitelist.length === 0) {
+                container.innerHTML = '<div class="empty-state">暂无登记的手机号</div>';
+                return;
+            }
+
+            let html = '';
+            whitelist.forEach(phone => {
+                html += `<div class="whitelist-item"><span class="phone">${phone}</span><button class="btn-remove" onclick="removeWhitelist('${phone}')">删除</button></div>`;
+            });
+            container.innerHTML = html;
+        }
+
         function doCheckin() {
             const name = document.getElementById('userName').value.trim();
+            const phone = document.getElementById('userPhone').value.trim();
+            
             if (!name) {
                 showMessage('请输入姓名！', 'error');
+                return;
+            }
+
+            if (!phone) {
+                showMessage('请输入手机号！', 'error');
+                return;
+            }
+
+            const phoneRegex = /^1[3-9]\d{9}$/;
+            if (!phoneRegex.test(phone)) {
+                showMessage('请输入正确的手机号格式！', 'error');
+                return;
+            }
+
+            const whitelist = getWhitelist();
+            if (!whitelist.includes(phone)) {
+                showMessage('您的手机号未登记，请联系管理员！', 'error');
                 return;
             }
 
@@ -715,12 +902,14 @@
                 checkinTime: timeStr,
                 checkoutTime: '',
                 location: currentLocation || '未知位置',
+                address: currentAddress || '',
                 timestamp: now.getTime()
             };
 
             if (todayRecord) {
                 todayRecord.checkinTime = timeStr;
                 todayRecord.location = currentLocation || '未知位置';
+                todayRecord.address = currentAddress || '';
             } else {
                 records.push(record);
             }
@@ -824,20 +1013,21 @@
                 return;
             }
 
-            let html = `<table><thead><tr><th>姓名</th><th>签到</th><th>签退</th><th>位置</th></tr></thead><tbody>`;
+            let html = `<table><thead><tr><th>姓名</th><th>签到</th><th>签退</th><th>地址</th><th>经纬度</th></tr></thead><tbody>`;
             todayRecords.forEach(r => {
                 let locationHtml = r.location || '-';
+                const addressHtml = r.address || '-';
                 if (r.location && r.location !== '未知位置') {
                     const parts = r.location.split(',');
                     if (parts.length === 2) {
                         const lat = parseFloat(parts[0].trim());
                         const lon = parseFloat(parts[1].trim());
                         if (!isNaN(lat) && !isNaN(lon)) {
-                            locationHtml = `<a href="${getMapLink(lat, lon)}" target="_blank" style="color:#1890ff;">查看</a>`;
+                            locationHtml = `<div>${lat}, ${lon}</div><a href="${getMapLink(lat, lon)}" target="_blank" style="color:#1890ff;font-size:12px;">🗺️ 查看地图</a>`;
                         }
                     }
                 }
-                html += `<tr><td>${escapeHtml(r.name)}</td><td>${r.checkinTime || '-'}</td><td>${r.checkoutTime || '-'}</td><td>${locationHtml}</td></tr>`;
+                html += `<tr><td>${escapeHtml(r.name)}</td><td>${r.checkinTime || '-'}</td><td>${r.checkoutTime || '-'}</td><td style="max-width:120px;word-break:break-all;">${addressHtml}</td><td style="white-space:nowrap;">${locationHtml}</td></tr>`;
             });
             html += '</tbody></table>';
             container.innerHTML = html;
@@ -866,6 +1056,7 @@
                 document.getElementById('adminPanel').classList.remove('hidden');
                 loadRecords();
                 loadStats();
+                loadWhitelist();
                 showMessage('登录成功！', 'success');
             } else {
                 showMessage('密码错误！', 'error');
@@ -911,24 +1102,25 @@
 
             const tbody = document.getElementById('recordsBody');
             if (filtered.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:30px;color:#718096;">暂无记录</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:30px;color:#718096;">暂无记录</td></tr>';
                 return;
             }
 
             let html = '';
             filtered.forEach(r => {
                 let locationHtml = r.location || '-';
+                const addressHtml = r.address || '-';
                 if (r.location && r.location !== '未知位置') {
                     const parts = r.location.split(',');
                     if (parts.length === 2) {
                         const lat = parseFloat(parts[0].trim());
                         const lon = parseFloat(parts[1].trim());
                         if (!isNaN(lat) && !isNaN(lon)) {
-                            locationHtml = `<a href="${getMapLink(lat, lon)}" target="_blank" style="color:#1890ff;">查看</a>`;
+                            locationHtml = `<div>${lat}, ${lon}</div><a href="${getMapLink(lat, lon)}" target="_blank" style="color:#1890ff;font-size:12px;">🗺️ 查看地图</a>`;
                         }
                     }
                 }
-                html += `<tr><td>${r.date}</td><td>${escapeHtml(r.name)}</td><td>${r.checkinTime || '-'}</td><td>${r.checkoutTime || '-'}</td><td>${locationHtml}</td></tr>`;
+                html += `<tr><td>${r.date}</td><td>${escapeHtml(r.name)}</td><td>${r.checkinTime || '-'}</td><td>${r.checkoutTime || '-'}</td><td style="max-width:150px;word-break:break-all;">${addressHtml}</td><td style="white-space:nowrap;">${locationHtml}</td></tr>`;
             });
             tbody.innerHTML = html;
             loadStats();
@@ -954,7 +1146,8 @@
                 '姓名': r.name,
                 '签到时间': r.checkinTime,
                 '签退时间': r.checkoutTime || '',
-                '打卡地点': r.location || ''
+                '地址': r.address || '',
+                '经纬度': r.location || ''
             }));
 
             const ws = XLSX.utils.json_to_sheet(data);
@@ -977,7 +1170,8 @@
                 '姓名': r.name,
                 '签到时间': r.checkinTime,
                 '签退时间': r.checkoutTime || '',
-                '打卡地点': r.location || ''
+                '地址': r.address || '',
+                '经纬度': r.location || ''
             }));
 
             const ws = XLSX.utils.json_to_sheet(data);
@@ -1021,6 +1215,7 @@
             document.getElementById('adminPanel').classList.remove('hidden');
             loadRecords();
             loadStats();
+            loadWhitelist();
         }
 
         init();
