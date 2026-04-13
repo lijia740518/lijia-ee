@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>打卡系统</title>
     <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
     <style>
@@ -13,40 +13,42 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 20px;
+            padding: 10px;
+            font-size: 16px;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 100%;
             margin: 0 auto;
         }
 
         h1 {
             color: white;
             text-align: center;
-            margin-bottom: 30px;
-            font-size: 2.5em;
+            margin-bottom: 15px;
+            font-size: 1.8em;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
         }
 
         .url-display {
             background: rgba(255,255,255,0.95);
-            padding: 15px 25px;
+            padding: 12px 15px;
             border-radius: 10px;
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
 
         .url-display a {
             color: #667eea;
-            font-size: 1.2em;
+            font-size: 0.95em;
             font-weight: bold;
             text-decoration: none;
             word-break: break-all;
+            display: block;
         }
 
         .url-display a:hover {
@@ -55,21 +57,22 @@
 
         .tabs {
             display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
         }
 
         .tab-btn {
-            padding: 12px 30px;
+            flex: 1;
+            padding: 12px 15px;
             border: none;
             border-radius: 8px;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 600;
             cursor: pointer;
             background: rgba(255,255,255,0.2);
             color: white;
             transition: all 0.3s;
+            text-align: center;
         }
 
         .tab-btn.active {
@@ -83,10 +86,10 @@
 
         .card {
             background: white;
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
 
         .hidden {
@@ -94,25 +97,24 @@
         }
 
         .checkin-form {
-            max-width: 500px;
-            margin: 0 auto;
+            max-width: 100%;
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             color: #333;
             font-weight: 600;
+            font-size: 14px;
         }
 
         input[type="text"],
         input[type="password"],
-        select,
-        input[type="date"] {
+        select {
             width: 100%;
             padding: 12px;
             border: 2px solid #e0e0e0;
@@ -128,7 +130,7 @@
         }
 
         .btn {
-            padding: 12px 30px;
+            padding: 14px 20px;
             border: none;
             border-radius: 8px;
             font-size: 16px;
@@ -136,6 +138,11 @@
             cursor: pointer;
             transition: all 0.3s;
             width: 100%;
+            touch-action: manipulation;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
         }
 
         .btn-primary {
@@ -145,7 +152,6 @@
 
         .btn-primary:hover {
             background: #5568d3;
-            transform: translateY(-2px);
         }
 
         .btn-success {
@@ -176,28 +182,29 @@
         }
 
         .clock {
-            font-size: 4em;
+            font-size: 3em;
             text-align: center;
             color: #667eea;
             font-weight: bold;
-            margin: 20px 0;
+            margin: 15px 0;
         }
 
         .date-display {
             text-align: center;
             color: #718096;
-            font-size: 1.2em;
-            margin-bottom: 20px;
+            font-size: 1em;
+            margin-bottom: 15px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            margin-top: 15px;
+            font-size: 14px;
         }
 
         th, td {
-            padding: 12px;
+            padding: 10px 8px;
             text-align: left;
             border-bottom: 1px solid #e0e0e0;
         }
@@ -208,6 +215,7 @@
             font-weight: 600;
             position: sticky;
             top: 0;
+            font-size: 12px;
         }
 
         tr:hover {
@@ -215,19 +223,19 @@
         }
 
         .table-container {
-            max-height: 400px;
+            max-height: 300px;
             overflow-y: auto;
-            margin-top: 20px;
+            margin-top: 15px;
             border-radius: 8px;
             border: 1px solid #e0e0e0;
+            -webkit-overflow-scrolling: touch;
         }
 
         .filter-bar {
             display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
-            align-items: center;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
         }
 
         .filter-bar label {
@@ -237,16 +245,26 @@
 
         .filter-bar select,
         .filter-bar input {
-            width: auto;
-            padding: 8px 12px;
+            padding: 10px;
+            font-size: 14px;
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .filter-row > * {
+            flex: 1;
         }
 
         .location-info {
             background: #e6f7ff;
             border: 1px solid #91d5ff;
             border-radius: 8px;
-            padding: 15px;
-            margin-top: 15px;
+            padding: 12px;
+            margin-top: 12px;
+            font-size: 14px;
         }
 
         .location-info.success {
@@ -259,17 +277,39 @@
             border-color: #ffccc7;
         }
 
+        .location-link {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 8px 12px;
+            background: #1890ff;
+            color: white;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .location-link:active {
+            background: #096dd9;
+        }
+
+        .location-coords {
+            font-size: 13px;
+            color: #666;
+            margin-top: 5px;
+        }
+
         .status-display {
             background: #f7fafc;
-            padding: 20px;
+            padding: 15px;
             border-radius: 10px;
-            margin-top: 20px;
+            margin-top: 15px;
         }
 
         .status-item {
             display: flex;
             justify-content: space-between;
-            padding: 10px 0;
+            padding: 8px 0;
             border-bottom: 1px solid #e0e0e0;
         }
 
@@ -280,73 +320,87 @@
         .status-label {
             font-weight: 600;
             color: #4a5568;
+            font-size: 14px;
         }
 
         .status-value {
             color: #667eea;
             font-weight: 600;
+            font-size: 14px;
+            word-break: break-all;
         }
 
         .summary-cards {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
         }
 
         .summary-card {
             background: white;
-            padding: 20px;
+            padding: 12px;
             border-radius: 10px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
         }
 
         .summary-card h4 {
             color: #718096;
-            font-size: 0.9em;
+            font-size: 11px;
             margin-bottom: 5px;
         }
 
         .summary-card .value {
-            font-size: 2em;
+            font-size: 1.5em;
             font-weight: bold;
             color: #667eea;
         }
 
         .export-section {
             background: #f7fafc;
-            padding: 20px;
+            padding: 15px;
             border-radius: 10px;
-            margin-top: 20px;
+            margin-top: 15px;
         }
 
         .export-section h3 {
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             color: #333;
+            font-size: 16px;
+        }
+
+        .export-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
         }
 
         .btn-export {
-            display: inline-block;
-            width: auto;
-            margin-right: 10px;
-            margin-top: 10px;
+            padding: 10px 15px;
+            font-size: 13px;
+            flex: 1;
+            min-width: 100px;
         }
 
         .admin-login {
-            max-width: 400px;
-            margin: 100px auto;
+            max-width: 100%;
+            margin: 30px auto;
         }
 
         .message {
             position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 15px 25px;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            padding: 12px 20px;
             border-radius: 8px;
             color: white;
             font-weight: 600;
             z-index: 1000;
             animation: slideIn 0.3s ease;
+            text-align: center;
+            font-size: 14px;
         }
 
         .message.success { background: #48bb78; }
@@ -354,20 +408,39 @@
         .message.info { background: #667eea; }
 
         @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
         .empty-state {
             text-align: center;
-            padding: 40px;
+            padding: 30px;
             color: #718096;
+            font-size: 14px;
         }
 
-        @media (max-width: 600px) {
-            .tabs { flex-direction: column; }
-            .filter-bar { flex-direction: column; align-items: stretch; }
-            .filter-bar select, .filter-bar input { width: 100%; }
+        .checkin-status {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 13px;
+            color: #52c41a;
+            margin-top: 8px;
+        }
+
+        .mobile-hint {
+            text-align: center;
+            color: #999;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 400px) {
+            body { padding: 8px; }
+            h1 { font-size: 1.5em; }
+            .clock { font-size: 2.5em; }
+            .summary-cards { grid-template-columns: 1fr; }
+            .tab-btn { padding: 10px 12px; font-size: 13px; }
         }
     </style>
 </head>
@@ -381,8 +454,8 @@
         </div>
 
         <div class="tabs">
-            <button class="tab-btn active" onclick="showTab('checkin')">🏠 打卡主页</button>
-            <button class="tab-btn" onclick="showTab('admin')">🔐 管理后台</button>
+            <button class="tab-btn active" onclick="showTab('checkin')">🏠 打卡</button>
+            <button class="tab-btn" onclick="showTab('admin')">🔐 管理</button>
         </div>
 
         <div id="checkinTab">
@@ -403,10 +476,14 @@
                     <div class="location-info" id="locationInfo">
                         <strong>📍 位置信息：</strong>
                         <span id="locationText">正在获取位置...</span>
+                        <div id="locationCoords" class="location-coords"></div>
+                        <a id="mapLink" class="location-link" href="#" target="_blank" style="display:none;">
+                            🗺️ 在地图中查看位置
+                        </a>
                     </div>
 
                     <div class="status-display" id="todayStatus" style="display:none;">
-                        <h3 style="margin-bottom: 15px; color: #333;">📊 今日打卡记录</h3>
+                        <h3 style="margin-bottom: 12px; color: #333; font-size: 15px;">📊 今日打卡记录</h3>
                         <div class="status-item">
                             <span class="status-label">姓名</span>
                             <span class="status-value" id="statusName">-</span>
@@ -420,10 +497,13 @@
                             <span class="status-value" id="statusCheckoutTime">-</span>
                         </div>
                         <div class="status-item">
-                            <span class="status-label">打卡地点</span>
+                            <span class="status-label">打卡位置</span>
                             <span class="status-value" id="statusLocation">-</span>
                         </div>
-                        <button class="btn btn-danger" style="margin-top: 20px;" onclick="doCheckout()" id="checkoutBtn">
+                        <a id="statusMapLink" class="location-link" href="#" target="_blank" style="display:none; margin-top: 10px;">
+                            🗺️ 在地图中查看
+                        </a>
+                        <button class="btn btn-danger" style="margin-top: 12px;" onclick="doCheckout()" id="checkoutBtn">
                             🚪 签退
                         </button>
                     </div>
@@ -431,21 +511,21 @@
             </div>
 
             <div class="card">
-                <h3 style="margin-bottom: 15px;">📋 今日打卡列表</h3>
+                <h3 style="margin-bottom: 12px; font-size: 15px;">📋 今日打卡列表</h3>
                 <div class="table-container" id="todayTable"></div>
             </div>
         </div>
 
         <div id="adminTab" class="hidden">
             <div class="card">
-                <h2 style="margin-bottom: 20px;">🔐 管理员登录</h2>
+                <h2 style="margin-bottom: 15px; font-size: 16px;">🔐 管理员登录</h2>
                 <div class="admin-login">
                     <div class="form-group">
                         <label for="adminPassword">管理员密码</label>
                         <input type="password" id="adminPassword" placeholder="请输入管理员密码">
                     </div>
                     <button class="btn btn-primary" onclick="adminLogin()">登录</button>
-                    <p style="margin-top: 15px; color: #718096; font-size: 14px;">
+                    <p style="margin-top: 12px; color: #718096; font-size: 13px;">
                         默认密码：admin123
                     </p>
                 </div>
@@ -453,31 +533,31 @@
 
             <div id="adminPanel" class="hidden">
                 <div class="card">
-                    <h2 style="margin-bottom: 20px;">📊 数据统计</h2>
+                    <h2 style="margin-bottom: 12px; font-size: 16px;">📊 数据统计</h2>
                     <div class="summary-cards">
                         <div class="summary-card">
-                            <h4>今日打卡人数</h4>
+                            <h4>今日</h4>
                             <div class="value" id="todayCheckinCount">0</div>
                         </div>
                         <div class="summary-card">
-                            <h4>本月打卡人次</h4>
+                            <h4>本月</h4>
                             <div class="value" id="monthCheckinCount">0</div>
                         </div>
                         <div class="summary-card">
-                            <h4>总打卡人次</h4>
+                            <h4>总计</h4>
                             <div class="value" id="totalCheckinCount">0</div>
                         </div>
                     </div>
                 </div>
 
                 <div class="card">
-                    <h3 style="margin-bottom: 15px;">📋 打卡记录查询</h3>
+                    <h3 style="margin-bottom: 12px; font-size: 15px;">📋 打卡记录查询</h3>
                     <div class="filter-bar">
-                        <label>按月份筛选：</label>
-                        <input type="month" id="filterMonth">
-                        <label>按姓名筛选：</label>
-                        <input type="text" id="filterName" placeholder="输入姓名">
-                        <button class="btn btn-primary" style="width: auto;" onclick="loadRecords()">查询</button>
+                        <div class="filter-row">
+                            <input type="month" id="filterMonth">
+                            <input type="text" id="filterName" placeholder="输入姓名">
+                        </div>
+                        <button class="btn btn-primary" onclick="loadRecords()">🔍 查询</button>
                     </div>
 
                     <div class="table-container">
@@ -486,9 +566,9 @@
                                 <tr>
                                     <th>日期</th>
                                     <th>姓名</th>
-                                    <th>签到时间</th>
-                                    <th>签退时间</th>
-                                    <th>打卡地点</th>
+                                    <th>签到</th>
+                                    <th>签退</th>
+                                    <th>位置</th>
                                 </tr>
                             </thead>
                             <tbody id="recordsBody"></tbody>
@@ -497,10 +577,12 @@
 
                     <div class="export-section">
                         <h3>📤 数据导出</h3>
-                        <p style="color: #718096; margin-bottom: 15px;">导出Excel文件，方便在Excel中查看和编辑</p>
-                        <button class="btn btn-success btn-export" onclick="exportCurrentMonth()">📥 导出当月数据</button>
-                        <button class="btn btn-secondary btn-export" onclick="exportAll()">📥 导出全部数据</button>
-                        <button class="btn btn-danger btn-export" onclick="clearAllRecords()">🗑️ 清空记录</button>
+                        <p style="color: #718096; margin-bottom: 10px; font-size: 13px;">导出Excel文件，方便在Excel中查看和编辑</p>
+                        <div class="export-buttons">
+                            <button class="btn btn-success btn-export" onclick="exportCurrentMonth()">📥 当月</button>
+                            <button class="btn btn-secondary btn-export" onclick="exportAll()">📥 全部</button>
+                            <button class="btn btn-danger btn-export" onclick="clearAllRecords()">🗑️ 清空</button>
+                        </div>
                     </div>
                 </div>
 
@@ -538,6 +620,8 @@
         function getLocation() {
             const locationInfo = document.getElementById('locationInfo');
             const locationText = document.getElementById('locationText');
+            const locationCoords = document.getElementById('locationCoords');
+            const mapLink = document.getElementById('mapLink');
 
             if (!navigator.geolocation) {
                 locationText.textContent = '浏览器不支持定位功能';
@@ -545,27 +629,47 @@
                 return;
             }
 
+            locationText.textContent = '正在获取位置...';
+            mapLink.style.display = 'none';
+
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     const lat = position.coords.latitude.toFixed(6);
                     const lon = position.coords.longitude.toFixed(6);
-                    currentLocation = `${lat}, ${lon}`;
-                    locationText.textContent = `纬度: ${lat}, 经度: ${lon}`;
+                    currentLocation = `${lat},${lon}`;
+                    locationText.textContent = '位置获取成功';
+                    locationCoords.textContent = `纬度: ${lat} 经度: ${lon}`;
+
+                    const mapsUrl = `https://maps.google.com?q=${lat},${lon}`;
+                    mapLink.href = mapsUrl;
+                    mapLink.style.display = 'inline-block';
+
                     locationInfo.className = 'location-info success';
                 },
                 (error) => {
                     let msg = '获取位置失败';
                     switch(error.code) {
-                        case 1: msg = '用户拒绝了定位请求'; break;
-                        case 2: msg = '无法获取位置信息'; break;
-                        case 3: msg = '定位请求超时'; break;
+                        case 1: msg = '请允许定位权限'; break;
+                        case 2: msg = '无法获取位置'; break;
+                        case 3: msg = '定位超时'; break;
                     }
                     locationText.textContent = msg;
+                    locationCoords.textContent = '';
                     currentLocation = '未知位置';
                     locationInfo.className = 'location-info error';
                 },
-                { enableHighAccuracy: true, timeout: 10000 }
+                { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 }
             );
+        }
+
+        function getMapLink(lat, lon) {
+            if (!lat || !lon) return '#';
+            const coords = lat + ',' + lon;
+            const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+            if (isMobile) {
+                return `geo:${coords}?q=${coords}`;
+            }
+            return `https://maps.google.com?q=${coords}`;
         }
 
         function getTodayDate() {
@@ -666,14 +770,35 @@
                 document.getElementById('statusName').textContent = record.name;
                 document.getElementById('statusCheckinTime').textContent = record.checkinTime || '-';
                 document.getElementById('statusCheckoutTime').textContent = record.checkoutTime || '-';
-                document.getElementById('statusLocation').textContent = record.location || '-';
+
+                const locationText = record.location || '-';
+                document.getElementById('statusLocation').textContent = locationText;
+
+                const statusMapLink = document.getElementById('statusMapLink');
+                if (locationText && locationText !== '-' && locationText !== '未知位置') {
+                    const parts = locationText.split(',');
+                    if (parts.length === 2) {
+                        const lat = parseFloat(parts[0].trim());
+                        const lon = parseFloat(parts[1].trim());
+                        if (!isNaN(lat) && !isNaN(lon)) {
+                            statusMapLink.href = getMapLink(lat, lon);
+                            statusMapLink.style.display = 'inline-block';
+                        } else {
+                            statusMapLink.style.display = 'none';
+                        }
+                    } else {
+                        statusMapLink.style.display = 'none';
+                    }
+                } else {
+                    statusMapLink.style.display = 'none';
+                }
 
                 const checkoutBtn = document.getElementById('checkoutBtn');
                 const checkinBtn = document.getElementById('checkinBtn');
                 if (record.checkoutTime) {
                     checkoutBtn.textContent = '✅ 已签退';
                     checkoutBtn.disabled = true;
-                    checkinBtn.textContent = '✅ 今日已完成';
+                    checkinBtn.textContent = '✅ 今日完成';
                     checkinBtn.disabled = true;
                 } else {
                     checkoutBtn.textContent = '🚪 签退';
@@ -699,9 +824,20 @@
                 return;
             }
 
-            let html = `<table><thead><tr><th>姓名</th><th>签到时间</th><th>签退时间</th><th>地点</th></tr></thead><tbody>`;
+            let html = `<table><thead><tr><th>姓名</th><th>签到</th><th>签退</th><th>位置</th></tr></thead><tbody>`;
             todayRecords.forEach(r => {
-                html += `<tr><td>${escapeHtml(r.name)}</td><td>${r.checkinTime || '-'}</td><td>${r.checkoutTime || '-'}</td><td>${escapeHtml(r.location || '-')}</td></tr>`;
+                let locationHtml = r.location || '-';
+                if (r.location && r.location !== '未知位置') {
+                    const parts = r.location.split(',');
+                    if (parts.length === 2) {
+                        const lat = parseFloat(parts[0].trim());
+                        const lon = parseFloat(parts[1].trim());
+                        if (!isNaN(lat) && !isNaN(lon)) {
+                            locationHtml = `<a href="${getMapLink(lat, lon)}" target="_blank" style="color:#1890ff;">查看</a>`;
+                        }
+                    }
+                }
+                html += `<tr><td>${escapeHtml(r.name)}</td><td>${r.checkinTime || '-'}</td><td>${r.checkoutTime || '-'}</td><td>${locationHtml}</td></tr>`;
             });
             html += '</tbody></table>';
             container.innerHTML = html;
@@ -775,13 +911,24 @@
 
             const tbody = document.getElementById('recordsBody');
             if (filtered.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:40px;color:#718096;">暂无记录</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:30px;color:#718096;">暂无记录</td></tr>';
                 return;
             }
 
             let html = '';
             filtered.forEach(r => {
-                html += `<tr><td>${r.date}</td><td>${escapeHtml(r.name)}</td><td>${r.checkinTime || '-'}</td><td>${r.checkoutTime || '-'}</td><td>${escapeHtml(r.location || '-')}</td></tr>`;
+                let locationHtml = r.location || '-';
+                if (r.location && r.location !== '未知位置') {
+                    const parts = r.location.split(',');
+                    if (parts.length === 2) {
+                        const lat = parseFloat(parts[0].trim());
+                        const lon = parseFloat(parts[1].trim());
+                        if (!isNaN(lat) && !isNaN(lon)) {
+                            locationHtml = `<a href="${getMapLink(lat, lon)}" target="_blank" style="color:#1890ff;">查看</a>`;
+                        }
+                    }
+                }
+                html += `<tr><td>${r.date}</td><td>${escapeHtml(r.name)}</td><td>${r.checkinTime || '-'}</td><td>${r.checkoutTime || '-'}</td><td>${locationHtml}</td></tr>`;
             });
             tbody.innerHTML = html;
             loadStats();
