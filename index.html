@@ -2,1002 +2,691 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>员工打卡系统</title>
-    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>记事本</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', sans-serif;
-            background: #f5f5f5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-        }
-        .header {
-            background: linear-gradient(135deg, #07c160 0%, #10b981 100%);
-            color: white;
             padding: 20px;
-            text-align: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-        .header h1 { font-size: 1.4em; font-weight: 600; }
-        .header p { font-size: 0.85em; opacity: 0.9; margin-top: 4px; }
-        
-        .tab-bar {
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 25px;
+        }
+
+        .input-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .input-group {
             display: flex;
-            background: white;
-            border-bottom: 1px solid #eee;
-        }
-        .tab-item {
-            flex: 1;
-            padding: 14px 0;
-            text-align: center;
-            font-size: 14px;
-            font-weight: 500;
-            color: #666;
-            position: relative;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .tab-item.active {
-            color: #07c160;
-        }
-        .tab-item.active::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 40px;
-            height: 3px;
-            background: #07c160;
-            border-radius: 2px;
+            flex-direction: column;
         }
 
-        .card {
-            background: white;
-            margin: 12px;
-            border-radius: 12px;
-            padding: 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-        }
-        
-        .clock {
-            font-size: 3.5em;
-            font-weight: 300;
-            color: #333;
-            text-align: center;
-            margin-bottom: 8px;
-            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-        }
-        .date-text {
-            text-align: center;
-            color: #999;
-            font-size: 14px;
-            margin-bottom: 20px;
-        }
-
-        .form-group { margin-bottom: 16px; }
-        .form-group label {
-            display: block;
+        .input-group label {
             font-size: 13px;
+            font-weight: 500;
             color: #666;
             margin-bottom: 8px;
-            font-weight: 500;
         }
-        .form-group input {
-            width: 100%;
-            padding: 12px 14px;
-            border: 1px solid #e8e8e8;
-            border-radius: 8px;
+
+        .input-group input,
+        .input-group textarea {
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
             font-size: 15px;
-            transition: border-color 0.3s;
-        }
-        .form-group input:focus {
+            transition: all 0.3s ease;
             outline: none;
-            border-color: #07c160;
+        }
+
+        .input-group input:focus,
+        .input-group textarea:focus {
+            border-color: #4facfe;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
         }
 
         .btn {
-            width: 100%;
-            padding: 14px;
+            padding: 12px 25px;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 15px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
-            touch-action: manipulation;
+            transition: all 0.3s ease;
+            align-self: flex-end;
         }
+
         .btn-primary {
-            background: linear-gradient(135deg, #07c160 0%, #10b981 100%);
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             color: white;
         }
-        .btn-primary:hover { opacity: 0.9; }
-        .btn-primary:active { transform: scale(0.98); }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(79, 172, 254, 0.4);
+        }
+
         .btn-secondary {
-            background: #f5f5f5;
-            color: #666;
-        }
-        .btn-danger {
-            background: #ff4d4f;
-            color: white;
-        }
-
-        .location-card {
-            background: #e6f7ff;
-            border: 1px solid #91d5ff;
-            border-radius: 8px;
-            padding: 14px;
-            margin-top: 16px;
-        }
-        .location-title {
-            font-size: 13px;
-            color: #1890ff;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .location-text {
-            font-size: 14px;
+            background: #f0f0f0;
             color: #333;
-            word-break: break-all;
+            margin-right: 10px;
         }
-        .location-coords {
-            font-size: 12px;
-            color: #999;
-            margin-top: 6px;
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
         }
-        .location-link {
-            display: inline-block;
-            margin-top: 10px;
-            padding: 8px 14px;
-            background: #1890ff;
+
+        .btn-success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
             color: white;
-            border-radius: 6px;
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 500;
         }
 
-        .status-card {
-            background: #f6ffed;
-            border: 1px solid #b7eb8f;
-            border-radius: 8px;
-            padding: 14px;
-            margin-top: 16px;
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(17, 153, 142, 0.4);
         }
-        .status-row {
+
+        .btn-warning {
+            background: linear-gradient(135deg, #fc4a1a 0%, #f7b733 100%);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(252, 74, 26, 0.4);
+        }
+
+        .btn-group {
             display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid #d9f7be;
-        }
-        .status-row:last-child { border-bottom: none; }
-        .status-label { color: #52c41a; font-size: 13px; }
-        .status-value { color: #333; font-weight: 500; font-size: 14px; }
-
-        .summary-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
             gap: 10px;
-            margin-bottom: 16px;
-        }
-        .summary-item {
-            background: white;
-            padding: 16px 12px;
-            border-radius: 10px;
-            text-align: center;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-        }
-        .summary-num {
-            font-size: 1.8em;
-            font-weight: 600;
-            color: #07c160;
-        }
-        .summary-label {
-            font-size: 11px;
-            color: #999;
-            margin-top: 4px;
+            margin-bottom: 20px;
         }
 
-        .table-wrapper {
+        .task-list {
             max-height: 400px;
             overflow-y: auto;
-            border-radius: 8px;
-            border: 1px solid #eee;
-            margin-top: 12px;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-        }
-        th {
+
+        .task-item {
             background: #f8f9fa;
-            padding: 12px 8px;
-            text-align: left;
-            color: #666;
-            font-weight: 600;
-            font-size: 12px;
-            position: sticky;
-            top: 0;
-            z-index: 1;
-        }
-        td {
-            padding: 12px 8px;
-            border-bottom: 1px solid #f0f0f0;
-            color: #333;
-        }
-        tr:hover { background: #fafafa; }
-
-        .filter-bar {
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 15px;
             display: flex;
-            gap: 10px;
-            margin-bottom: 16px;
+            justify-content: space-between;
+            align-items: flex-start;
+            transition: all 0.3s ease;
+            border-left: 4px solid #4facfe;
         }
-        .filter-bar select, .filter-bar input {
+
+        .task-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .task-content {
             flex: 1;
-            padding: 10px 12px;
-            border: 1px solid #e8e8e8;
-            border-radius: 6px;
-            font-size: 14px;
+            min-width: 0;
         }
 
-        .export-btn {
-            display: flex;
-            gap: 10px;
-            margin-top: 16px;
-        }
-        .export-btn .btn { flex: 1; }
-
-        .message {
-            position: fixed;
-            top: 100px;
-            left: 12px;
-            right: 12px;
-            padding: 14px 16px;
-            border-radius: 8px;
-            color: white;
+        .task-time {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 8px;
             font-weight: 500;
-            z-index: 1000;
-            animation: slideIn 0.3s ease;
-            text-align: center;
         }
-        .message.success { background: #52c41a; }
-        .message.error { background: #ff4d4f; }
-        .message.info { background: #1890ff; }
-        @keyframes slideIn {
-            from { transform: translateY(-20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+
+        .task-text {
+            font-size: 16px;
+            color: #333;
+            line-height: 1.5;
+            word-break: break-word;
+        }
+
+        .task-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-left: 15px;
+        }
+
+        .btn-delete,
+        .btn-edit {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-edit {
+            background: #4facfe;
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: #3d9ae8;
+        }
+
+        .btn-delete {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #ee5a5a;
         }
 
         .empty-state {
             text-align: center;
-            padding: 40px 20px;
+            padding: 60px 20px;
             color: #999;
+        }
+
+        .empty-state svg {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #666;
+        }
+
+        .empty-state p {
             font-size: 14px;
         }
-        .empty-state .icon { font-size: 48px; margin-bottom: 12px; opacity: 0.5; }
 
-        .admin-login {
-            max-width: 320px;
-            margin: 40px auto;
+        .hidden {
+            display: none;
         }
-        .admin-login h2 {
-            text-align: center;
-            color: #333;
+
+        #file-input {
+            display: none;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 15px;
             margin-bottom: 20px;
-            font-size: 1.3em;
-        }
-        .admin-login .tip {
-            text-align: center;
-            color: #999;
-            font-size: 12px;
-            margin-top: 12px;
+            outline: none;
+            transition: all 0.3s ease;
         }
 
-        .whitelist-section {
-            margin-top: 16px;
-            padding-top: 16px;
-            border-top: 1px solid #eee;
+        .search-box:focus {
+            border-color: #4facfe;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
         }
-        .whitelist-list {
-            max-height: 200px;
-            overflow-y: auto;
-            border: 1px solid #eee;
-            border-radius: 8px;
-            padding: 8px;
-            margin-top: 12px;
-        }
-        .whitelist-item {
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 10px 8px;
-            border-bottom: 1px solid #f5f5f5;
-        }
-        .whitelist-item:last-child { border-bottom: none; }
-        .whitelist-phone { font-weight: 500; color: #333; }
-        .btn-remove {
-            background: #fff1f0;
-            color: #ff4d4f;
-            border: none;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            cursor: pointer;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
         }
 
-        @media (max-width: 375px) {
-            .clock { font-size: 2.8em; }
-            .summary-grid { grid-template-columns: 1fr; }
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            width: 90%;
+            max-width: 450px;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        .modal h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .modal .input-group {
+            margin-bottom: 15px;
+        }
+
+        .modal .btn-group {
+            justify-content: flex-end;
+            margin-top: 25px;
+        }
+
+        @media (max-width: 600px) {
+            .input-section {
+                grid-template-columns: 1fr;
+            }
+
+            .btn {
+                align-self: stretch;
+            }
+
+            .btn-group {
+                flex-wrap: wrap;
+            }
+
+            .task-item {
+                flex-direction: column;
+            }
+
+            .task-actions {
+                flex-direction: row;
+                margin-left: 0;
+                margin-top: 15px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>📋 员工打卡系统</h1>
-        <p>城南代理商专用</p>
-    </div>
-
-    <div class="tab-bar">
-        <div class="tab-item active" onclick="showTab('checkin')">🏠 打卡</div>
-        <div class="tab-item" onclick="showTab('records')">📊 记录</div>
-        <div class="tab-item" onclick="showTab('admin')">🔐 管理</div>
-    </div>
-
-    <div id="checkinTab">
-        <div class="card">
-            <div class="clock" id="clock">00:00:00</div>
-            <div class="date-text" id="dateText">2024年1月1日 星期一</div>
-
-            <div class="form-group">
-                <label>👤 姓名</label>
-                <input type="text" id="nameInput" placeholder="请输入姓名" />
-            </div>
-
-            <div class="form-group">
-                <label>📱 手机号</label>
-                <input type="text" id="phoneInput" placeholder="请输入手机号" />
-            </div>
-
-            <button class="btn btn-primary" id="checkinBtn" onclick="handleCheckin()">
-                ✅ 签到
-            </button>
-
-            <div class="location-card" id="locationCard">
-                <div class="location-title">📍 获取位置中...</div>
-                <div class="location-text" id="locationText">正在获取您的位置...</div>
-                <div class="location-coords" id="locationCoords"></div>
-                <a href="#" id="mapLink" class="location-link" style="display:none">🗺️ 查看地图</a>
-            </div>
-
-            <div class="status-card" id="statusCard" style="display:none">
-                <div class="status-row">
-                    <span class="status-label">姓名</span>
-                    <span class="status-value" id="statusName">-</span>
-                </div>
-                <div class="status-row">
-                    <span class="status-label">签到时间</span>
-                    <span class="status-value" id="statusCheckin">-</span>
-                </div>
-                <div class="status-row">
-                    <span class="status-label">签退时间</span>
-                    <span class="status-value" id="statusCheckout">-</span>
-                </div>
-                <div class="status-row">
-                    <span class="status-label">打卡地点</span>
-                    <span class="status-value" id="statusLocation">-</span>
-                </div>
-                <button class="btn btn-danger" style="margin-top: 12px;" id="checkoutBtn" onclick="handleCheckout()">
-                    🚪 签退
-                </button>
-            </div>
+    <div class="container">
+        <div class="header">
+            <h1>📝 记事本</h1>
+            <p>记录生活中的每一个重要时刻</p>
         </div>
 
-        <div class="card">
-            <h3 style="font-size: 15px; margin-bottom: 12px; color: #333;">📋 今日打卡</h3>
-            <div class="table-wrapper" id="todayRecords"></div>
-        </div>
-    </div>
-
-    <div id="recordsTab" style="display:none">
-        <div class="card">
-            <div class="filter-bar">
-                <input type="month" id="filterMonth" value="">
-                <input type="text" id="filterName" placeholder="搜索姓名">
-            </div>
-            <button class="btn btn-secondary" onclick="loadRecords()">🔍 查询</button>
-            
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>日期</th>
-                            <th>姓名</th>
-                            <th>签到</th>
-                            <th>签退</th>
-                            <th>打卡地点</th>
-                            <th>状态</th>
-                        </tr>
-                    </thead>
-                    <tbody id="recordsTable"></tbody>
-                </table>
+        <div class="content">
+            <div class="input-section">
+                <div class="input-group">
+                    <label for="task-time">时间</label>
+                    <input type="datetime-local" id="task-time" value="">
+                </div>
+                <div class="input-group">
+                    <label for="task-input">事项</label>
+                    <input type="text" id="task-input" placeholder="输入事项内容...">
+                </div>
+                <button class="btn btn-primary" onclick="addTask()">添加</button>
             </div>
 
-            <div class="export-btn">
-                <button class="btn btn-primary" onclick="exportMonth()">📥 导出本月</button>
-                <button class="btn btn-secondary" onclick="exportAll()">📥 导出全部</button>
+            <input type="text" class="search-box" id="search-box" placeholder="搜索事项...">
+
+            <div class="btn-group">
+                <button class="btn btn-secondary" onclick="document.getElementById('file-input').click()">导入 Excel</button>
+                <button class="btn btn-success" onclick="exportToExcel()">导出 Excel</button>
+                <button class="btn btn-warning" onclick="clearAllTasks()">清空全部</button>
+            </div>
+
+            <div class="task-list" id="task-list">
+                <div class="empty-state">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                    <h3>暂无事项</h3>
+                    <p>点击上方添加按钮开始记录</p>
+                </div>
             </div>
         </div>
     </div>
 
-    <div id="adminTab" style="display:none">
-        <div class="card admin-login" id="loginPanel">
-            <h2>🔐 管理员登录</h2>
-            <div class="form-group">
-                <label>密码</label>
-                <input type="password" id="adminPwd" placeholder="请输入管理员密码" />
+    <div class="modal-overlay" id="edit-modal">
+        <div class="modal">
+            <h2>编辑事项</h2>
+            <div class="input-group">
+                <label for="edit-time">时间</label>
+                <input type="datetime-local" id="edit-time">
             </div>
-            <button class="btn btn-primary" onclick="adminLogin()">登录</button>
-            <p class="tip">默认密码：admin123</p>
-        </div>
-
-        <div id="adminPanel" style="display:none">
-            <div class="card">
-                <h3 style="font-size: 15px; margin-bottom: 12px; color: #333;">📊 数据统计</h3>
-                <div class="summary-grid">
-                    <div class="summary-item">
-                        <div class="summary-num" id="statToday">0</div>
-                        <div class="summary-label">今日打卡</div>
-                    </div>
-                    <div class="summary-item">
-                        <div class="summary-num" id="statMonth">0</div>
-                        <div class="summary-label">本月打卡</div>
-                    </div>
-                    <div class="summary-item">
-                        <div class="summary-num" id="statTotal">0</div>
-                        <div class="summary-label">总打卡数</div>
-                    </div>
-                </div>
+            <div class="input-group">
+                <label for="edit-text">事项内容</label>
+                <input type="text" id="edit-text">
             </div>
-
-            <div class="card">
-                <h3 style="font-size: 15px; margin-bottom: 12px; color: #333;">📱 员工管理</h3>
-                <div class="form-group">
-                    <label>添加员工手机号</label>
-                    <input type="text" id="addPhone" placeholder="请输入手机号" />
-                </div>
-                <button class="btn btn-primary" onclick="addEmployee()">➕ 添加</button>
-                
-                <div class="whitelist-section">
-                    <h4 style="font-size: 14px; color: #666;">已登记员工</h4>
-                    <div class="whitelist-list" id="employeeList">
-                        <div class="empty-state">暂无登记员工</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <button class="btn btn-secondary" onclick="adminLogout()">🚪 退出登录</button>
+            <div class="btn-group">
+                <button class="btn btn-secondary" onclick="closeEditModal()">取消</button>
+                <button class="btn btn-primary" onclick="saveEdit()">保存</button>
             </div>
         </div>
     </div>
+
+    <input type="file" id="file-input" accept=".xlsx,.xls" onchange="importFromExcel(event)">
 
     <script>
-        let currentLocation = null;
-        let currentAddress = '';
-        let locationSource = ''; // 'auto' | 'manual' | ''
-
-        function init() {
-            updateTime();
-            setInterval(updateTime, 1000);
-            getLocation();
-            loadTodayRecords();
-            document.getElementById('filterMonth').value = getCurrentMonth();
-            
-            if (localStorage.getItem('adminLoggedIn') === 'true') {
-                showAdminPanel();
-            }
-        }
-
-        function updateTime() {
-            const now = new Date();
-            const h = String(now.getHours()).padStart(2, '0');
-            const m = String(now.getMinutes()).padStart(2, '0');
-            const s = String(now.getSeconds()).padStart(2, '0');
-            document.getElementById('clock').textContent = `${h}:${m}:${s}`;
-
-            const weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
-            document.getElementById('dateText').textContent = 
-                `${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日 ${weekDays[now.getDay()]}`;
-        }
-
-        function getLocation() {
-            if (!navigator.geolocation) {
-                tryIPLocation();
-                return;
-            }
-
-            document.getElementById('locationCard').style.background = '#fffbe6';
-            document.getElementById('locationCard').style.borderColor = '#ffe58f';
-            document.getElementById('locationText').textContent = '正在快速获取位置...';
-
-            let quickSuccess = false;
-            
-            navigator.geolocation.getCurrentPosition(pos => {
-                quickSuccess = true;
-                processPosition(pos);
-            }, err => {
-                if (!quickSuccess) {
-                    tryIPLocation();
-                }
-            }, { enableHighAccuracy: false, timeout: 5000, maximumAge: 300000 });
-
-            navigator.geolocation.getCurrentPosition(pos => {
-                if (!quickSuccess) {
-                    processPosition(pos);
-                }
-            }, () => {}, { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 });
-        }
-
-        function processPosition(pos) {
-            const lat = pos.coords.latitude.toFixed(6);
-            const lon = pos.coords.longitude.toFixed(6);
-            currentLocation = `${lat},${lon}`;
-            locationSource = 'auto';
-            document.getElementById('locationCoords').textContent = `📍 ${lat}, ${lon} (自动定位)`;
-            document.getElementById('mapLink').href = `https://map.baidu.com/search/${lat},${lon}`;
-            document.getElementById('mapLink').style.display = 'inline-block';
-            
-            document.getElementById('locationCard').style.background = '#e6f7ff';
-            document.getElementById('locationCard').style.borderColor = '#91d5ff';
-            
-            getAddress(lat, lon);
-        }
-
-        function tryIPLocation() {
-            document.getElementById('locationText').textContent = '尝试通过网络定位...';
-            fetch('https://ipapi.co/json/')
-            .then(res => res.json())
-            .then(data => {
-                if (data.latitude && data.longitude) {
-                    currentLocation = `${data.latitude.toFixed(4)},${data.longitude.toFixed(4)}`;
-                    locationSource = 'auto';
-                    document.getElementById('locationCoords').textContent = `📍 ${data.latitude.toFixed(4)}, ${data.longitude.toFixed(4)} (网络定位)`;
-                    document.getElementById('mapLink').href = `https://map.baidu.com/search/${data.latitude},${data.longitude}`;
-                    document.getElementById('mapLink').style.display = 'inline-block';
-                    document.getElementById('locationCard').style.background = '#e6f7ff';
-                    document.getElementById('locationCard').style.borderColor = '#91d5ff';
-                    
-                    currentAddress = data.city ? `${data.city} ${data.region || ''}` : '位置获取成功';
-                    document.getElementById('locationText').textContent = currentAddress;
-                } else {
-                    tryAlternativeIPLocation();
-                }
-            }).catch(() => {
-                tryAlternativeIPLocation();
-            });
-        }
-
-        function tryAlternativeIPLocation() {
-            fetch('https://api.ipify.org?format=json')
-            .then(res => res.json())
-            .then(data => {
-                if (data.ip) {
-                    fetch(`https://ipgeolocation.abstractapi.com/v1/?api_key=70b704e372e748e09a625ccb4d99e522&ip_address=${data.ip}`)
-                    .then(res => res.json())
-                    .then(loc => {
-                        if (loc.latitude && loc.longitude) {
-                            currentLocation = `${loc.latitude.toFixed(4)},${loc.longitude.toFixed(4)}`;
-                            locationSource = 'auto';
-                            document.getElementById('locationCoords').textContent = `📍 ${loc.latitude.toFixed(4)}, ${loc.longitude.toFixed(4)} (网络定位)`;
-                            document.getElementById('mapLink').href = `https://map.baidu.com/search/${loc.latitude},${loc.longitude}`;
-                            document.getElementById('mapLink').style.display = 'inline-block';
-                            document.getElementById('locationCard').style.background = '#e6f7ff';
-                            document.getElementById('locationCard').style.borderColor = '#91d5ff';
-                            
-                            currentAddress = loc.city ? `${loc.city} ${loc.region || ''}` : '位置获取成功';
-                            document.getElementById('locationText').textContent = currentAddress;
-                        } else {
-                            showLocationOptions();
-                        }
-                    }).catch(() => showLocationOptions());
-                } else {
-                    showLocationOptions();
-                }
-            }).catch(() => {
-                showLocationOptions();
-            });
-        }
-
-        function showLocationOptions() {
-            currentLocation = '未知位置';
-            currentAddress = '未知位置';
-            document.getElementById('locationText').textContent = '无法自动获取位置';
-            document.getElementById('locationCoords').textContent = '';
-            document.getElementById('mapLink').style.display = 'none';
-            document.getElementById('locationCard').style.background = '#fff2f0';
-            document.getElementById('locationCard').style.borderColor = '#ffccc7';
-            
-            document.getElementById('locationCard').innerHTML = `
-                <div class="location-title">📍 位置获取失败</div>
-                <div class="location-text">无法自动获取位置，请选择以下方式：</div>
-                <button class="btn btn-secondary" style="margin-top: 12px; width:100%;" onclick="getLocation()">🔄 重新获取位置</button>
-                <button class="btn btn-primary" style="margin-top: 8px; width:100%;" onclick="showManualInput()">📍 手动输入位置</button>
-            `;
-        }
-
-        function showManualInput() {
-            document.getElementById('locationCard').innerHTML = `
-                <div class="location-title">📍 手动输入打卡地点</div>
-                <input type="text" id="manualAddressInput" placeholder="请输入打卡地点（如：城南办事处）" style="width:100%; padding:12px; margin:10px 0; border:1px solid #e8e8e8; border-radius:8px; font-size:15px;" />
-                <button class="btn btn-primary" style="width:100%;" onclick="saveManualLocation()">✓ 确认位置</button>
-                <button class="btn btn-secondary" style="width:100%; margin-top:8px;" onclick="cancelManualInput()">✕ 取消</button>
-            `;
-        }
-
-        function saveManualLocation() {
-            const address = document.getElementById('manualAddressInput').value.trim();
-            if (!address) {
-                showMsg('请输入打卡地点', 'error');
-                return;
-            }
-            currentLocation = '手动输入';
-            currentAddress = address;
-            locationSource = 'manual';
-            document.getElementById('locationCard').innerHTML = `
-                <div class="location-title">⚠️ 手动输入位置</div>
-                <div style="color:#faad14; font-size:12px; margin-bottom:8px;">⚠️ 此位置为手动输入，将被标记审核</div>
-                <div class="location-text">${address}</div>
-                <div class="location-coords">📍 手动输入</div>
-                <button class="btn btn-secondary" style="margin-top:10px; width:100%;" onclick="getLocation()">🔄 重新获取位置</button>
-            `;
-            document.getElementById('locationCard').style.background = '#fffbe6';
-            document.getElementById('locationCard').style.borderColor = '#ffe58f';
-            showMsg('位置已设置（将被标记审核）', 'info');
-        }
-
-        function cancelManualInput() {
-            getLocation();
-        }
-
-        function getAddress(lat, lon) {
-            fetch(`https://api.map.baidu.com/reverse_geocoding/v3/?ak=E4805d16520de693a3fe707cdc962045&output=json&coordtype=wgs84ll&location=${lat},${lon}`)
-            .then(res => res.json())
-            .then(data => {
-                if (data.status === 0 && data.result) {
-                    currentAddress = data.result.formatted_address || '位置获取成功';
-                } else {
-                    currentAddress = '位置获取成功';
-                }
-                document.getElementById('locationText').textContent = currentAddress;
-            }).catch(() => {
-                currentAddress = '位置获取成功';
-                document.getElementById('locationText').textContent = currentAddress;
-            });
-        }
-
-        function getToday() {
-            const now = new Date();
-            return `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-        }
-
-        function getCurrentMonth() {
-            const now = new Date();
-            return `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2, '0')}`;
-        }
-
-        function getRecords() { return JSON.parse(localStorage.getItem('checkinRecords') || '[]'); }
-        function saveRecords(records) { localStorage.setItem('checkinRecords', JSON.stringify(records)); }
-        function getEmployees() { return JSON.parse(localStorage.getItem('employees') || '[]'); }
-        function saveEmployees(emps) { localStorage.setItem('employees', JSON.stringify(emps)); }
-
-        function handleCheckin() {
-            const name = document.getElementById('nameInput').value.trim();
-            const phone = document.getElementById('phoneInput').value.trim();
-
-            if (!name) { showMsg('请输入姓名', 'error'); return; }
-            if (!phone) { showMsg('请输入手机号', 'error'); return; }
-            if (!/^1[3-9]\d{9}$/.test(phone)) { showMsg('手机号格式错误', 'error'); return; }
-
-            if (!currentLocation || currentLocation === '未知位置') {
-                showMsg('请先获取打卡位置', 'error');
-                return;
-            }
-
-            const emps = getEmployees();
-            if (emps.length > 0 && !emps.includes(phone)) {
-                showMsg('该手机号未登记', 'error');
-                return;
-            }
-
-            const records = getRecords();
-            const today = getToday();
-            const now = new Date();
-            const time = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
-
-            const existing = records.find(r => r.name === name && r.date === today);
-            if (existing && existing.checkin) {
-                showMsg('今日已签到', 'info');
-                return;
-            }
-
-            if (existing) {
-                existing.checkin = time;
-                existing.location = currentLocation;
-                existing.address = currentAddress;
-                existing.locationSource = locationSource;
-            } else {
-                records.push({
-                    id: Date.now(),
-                    name, phone, date: today,
-                    checkin: time, checkout: '',
-                    location: currentLocation,
-                    address: currentAddress,
-                    locationSource: locationSource
-                });
-            }
-
-            saveRecords(records);
-            showMsg('签到成功', 'success');
-            loadTodayRecords();
-            showTodayStatus(name);
-            document.getElementById('nameInput').value = '';
-            document.getElementById('phoneInput').value = '';
-        }
-
-        function handleCheckout() {
-            const name = document.getElementById('statusName').textContent;
-            if (!name || name === '-') { showMsg('请先签到', 'error'); return; }
-
-            const records = getRecords();
-            const today = getToday();
-            const now = new Date();
-            const time = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
-
-            const record = records.find(r => r.name === name && r.date === today);
-            if (record) {
-                record.checkout = time;
-                saveRecords(records);
-                showMsg('签退成功', 'success');
-                loadTodayRecords();
-                showTodayStatus(name);
-            }
-        }
-
-        function showTodayStatus(name) {
-            const records = getRecords();
-            const today = getToday();
-            const record = records.find(r => r.name === name && r.date === today);
-
-            if (record) {
-                document.getElementById('statusCard').style.display = 'block';
-                document.getElementById('statusName').textContent = record.name;
-                document.getElementById('statusCheckin').textContent = record.checkin || '-';
-                document.getElementById('statusCheckout').textContent = record.checkout || '-';
-                document.getElementById('statusLocation').textContent = record.address || record.location || '-';
-
-                const btn = document.getElementById('checkoutBtn');
-                if (record.checkout) {
-                    btn.textContent = '✅ 已签退';
-                    btn.disabled = true;
-                    document.getElementById('checkinBtn').textContent = '✅ 今日完成';
-                    document.getElementById('checkinBtn').disabled = true;
-                } else {
-                    btn.textContent = '🚪 签退';
-                    btn.disabled = false;
-                    document.getElementById('checkinBtn').textContent = '✅ 已签到';
-                    document.getElementById('checkinBtn').disabled = true;
-                }
-            } else {
-                document.getElementById('statusCard').style.display = 'none';
-                document.getElementById('checkinBtn').textContent = '✅ 签到';
-                document.getElementById('checkinBtn').disabled = false;
-            }
-        }
-
-        function loadTodayRecords() {
-            const records = getRecords().filter(r => r.date === getToday()).sort((a, b) => b.id - a.id);
-            const container = document.getElementById('todayRecords');
-
-            if (records.length === 0) {
-                container.innerHTML = '<div class="empty-state">今日暂无打卡记录</div>';
-                return;
-            }
-
-            let html = '<table><thead><tr><th>姓名</th><th>签到</th><th>签退</th><th>地点</th><th>状态</th></tr></thead><tbody>';
-            records.forEach(r => {
-                const source = r.locationSource === 'manual' ? '<span style="color:#faad14">⚠️ 手动</span>' : '<span style="color:#52c41a">✓ 自动</span>';
-                html += `<tr><td>${r.name}</td><td>${r.checkin || '-'}</td><td>${r.checkout || '-'}</td><td style="max-width:80px;word-break:break-all;">${r.address || '-'}</td><td>${source}</td></tr>`;
-            });
-            html += '</tbody></table>';
-            container.innerHTML = html;
-        }
-
-        function getMapUrl(location, address) {
-            if (!location || location === '未知位置') return '';
-            if (location === '手动输入' && address) {
-                return `https://map.baidu.com/search/${encodeURIComponent(address)}`;
-            }
-            if (location.includes(',')) {
-                return `https://map.baidu.com/search/${location}`;
-            }
-            return '';
-        }
-
-        function loadRecords() {
-            const records = getRecords().filter(r => r.checkin);
-            const month = document.getElementById('filterMonth').value;
-            const name = document.getElementById('filterName').value.trim().toLowerCase();
-
-            let filtered = records;
-            if (month) filtered = filtered.filter(r => r.date.startsWith(month));
-            if (name) filtered = filtered.filter(r => r.name.toLowerCase().includes(name));
-            filtered.sort((a, b) => new Date(b.date + ' ' + b.checkin) - new Date(a.date + ' ' + a.checkin));
-
-            const tbody = document.getElementById('recordsTable');
-            if (filtered.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="empty-state">暂无记录</td></tr>';
-                return;
-            }
-
-            let html = '';
-            filtered.forEach(r => {
-                const source = r.locationSource === 'manual' ? '⚠️ 手动' : '✓ 自动';
-                html += `<tr><td>${r.date}</td><td>${r.name}</td><td>${r.checkin || '-'}</td><td>${r.checkout || '-'}</td><td style="max-width:100px;word-break:break-all;">${r.address || r.location || '-'}</td><td>${source}</td></tr>`;
-            });
-            tbody.innerHTML = html;
-        }
-
-        function exportMonth() {
-            const month = document.getElementById('filterMonth').value;
-            if (!month) { showMsg('请选择月份', 'error'); return; }
-
-            const records = getRecords().filter(r => r.checkin && r.date.startsWith(month));
-            if (records.length === 0) { showMsg('该月无数据', 'error'); return; }
-
-            const data = records.map(r => {
-                const mapUrl = getMapUrl(r.location, r.address);
-                return {
-                    '日期': r.date, '姓名': r.name, '签到': r.checkin, 
-                    '签退': r.checkout || '', '打卡地点': r.address || r.location || '',
-                    '地图链接': mapUrl,
-                    '定位方式': r.locationSource === 'manual' ? '⚠️ 手动输入' : '✓ 自动定位'
-                };
-            });
-
-            const ws = XLSX.utils.json_to_sheet(data);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, '打卡记录');
-            XLSX.writeFile(wb, `打卡记录_${month.replace('-', '年')}月.xlsx`);
-            showMsg('导出成功', 'success');
-        }
-
-        function exportAll() {
-            const records = getRecords().filter(r => r.checkin);
-            if (records.length === 0) { showMsg('暂无数据', 'error'); return; }
-
-            const data = records.map(r => {
-                const mapUrl = getMapUrl(r.location, r.address);
-                return {
-                    '日期': r.date, '姓名': r.name, '签到': r.checkin, 
-                    '签退': r.checkout || '', '打卡地点': r.address || r.location || '',
-                    '地图链接': mapUrl,
-                    '定位方式': r.locationSource === 'manual' ? '⚠️ 手动输入' : '✓ 自动定位'
-                };
-            });
-
-            const ws = XLSX.utils.json_to_sheet(data);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, '打卡记录');
-            XLSX.writeFile(wb, '打卡记录_全部.xlsx');
-            showMsg('导出成功', 'success');
-        }
-
-        function adminLogin() {
-            const pwd = document.getElementById('adminPwd').value;
-            if (pwd === 'admin123') {
-                localStorage.setItem('adminLoggedIn', 'true');
-                showAdminPanel();
-                showMsg('登录成功', 'success');
-            } else {
-                showMsg('密码错误', 'error');
-            }
-        }
-
-        function showAdminPanel() {
-            document.getElementById('loginPanel').style.display = 'none';
-            document.getElementById('adminPanel').style.display = 'block';
-            loadStats();
-            loadEmployees();
-        }
-
-        function adminLogout() {
-            localStorage.removeItem('adminLoggedIn');
-            document.getElementById('adminPwd').value = '';
-            document.getElementById('loginPanel').style.display = 'block';
-            document.getElementById('adminPanel').style.display = 'none';
-            showMsg('已退出', 'info');
-        }
-
-        function loadStats() {
-            const records = getRecords().filter(r => r.checkin);
-            const today = getToday();
-            const month = getCurrentMonth();
-
-            document.getElementById('statToday').textContent = records.filter(r => r.date === today).length;
-            document.getElementById('statMonth').textContent = records.filter(r => r.date.startsWith(month)).length;
-            document.getElementById('statTotal').textContent = records.length;
-        }
-
-        function addEmployee() {
-            const phone = document.getElementById('addPhone').value.trim();
-            if (!phone || !/^1[3-9]\d{9}$/.test(phone)) {
-                showMsg('请输入正确的手机号', 'error');
-                return;
-            }
-
-            const emps = getEmployees();
-            if (emps.includes(phone)) {
-                showMsg('该手机号已登记', 'info');
-                return;
-            }
-
-            emps.push(phone);
-            saveEmployees(emps);
-            loadEmployees();
-            document.getElementById('addPhone').value = '';
-            showMsg('添加成功', 'success');
-        }
-
-        function loadEmployees() {
-            const emps = getEmployees();
-            const container = document.getElementById('employeeList');
-
-            if (emps.length === 0) {
-                container.innerHTML = '<div class="empty-state">暂无登记员工</div>';
-                return;
-            }
-
-            let html = '';
-            emps.forEach(phone => {
-                html += `<div class="whitelist-item"><span class="whitelist-phone">${phone}</span><button class="btn-remove" onclick="removeEmployee('${phone}')">删除</button></div>`;
-            });
-            container.innerHTML = html;
-        }
-
-        function removeEmployee(phone) {
-            const emps = getEmployees().filter(p => p !== phone);
-            saveEmployees(emps);
-            loadEmployees();
-            showMsg('删除成功', 'success');
-        }
-
-        function showTab(tab) {
-            document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('[id$=Tab]').forEach(t => t.style.display = 'none');
-
-            document.querySelector(`[onclick="showTab('${tab}')"]`).classList.add('active');
-            document.getElementById(`${tab}Tab`).style.display = 'block';
-
-            if (tab === 'records') loadRecords();
-        }
-
-        function showMsg(text, type) {
-            const msg = document.createElement('div');
-            msg.className = `message ${type}`;
-            msg.textContent = text;
-            document.body.appendChild(msg);
-            setTimeout(() => msg.remove(), 2500);
-        }
-
-        document.getElementById('nameInput').addEventListener('input', () => {
-            showTodayStatus(document.getElementById('nameInput').value.trim());
+        let tasks = [];
+        let editingId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTasks();
+            setDefaultTime();
         });
 
-        init();
+        document.getElementById('search-box').addEventListener('input', filterTasks);
+
+        function setDefaultTime() {
+            const now = new Date();
+            const timeStr = now.toISOString().slice(0, 16);
+            document.getElementById('task-time').value = timeStr;
+        }
+
+        function addTask() {
+            const time = document.getElementById('task-time').value;
+            const text = document.getElementById('task-input').value.trim();
+
+            if (!time || !text) {
+                alert('请填写时间和事项内容');
+                return;
+            }
+
+            const task = {
+                id: Date.now(),
+                time: time,
+                text: text,
+                createdAt: new Date().toISOString()
+            };
+
+            tasks.push(task);
+            saveTasks();
+            renderTasks();
+
+            document.getElementById('task-input').value = '';
+            setDefaultTime();
+        }
+
+        function renderTasks(filter = '') {
+            const taskList = document.getElementById('task-list');
+            const filteredTasks = tasks.filter(task => 
+                task.text.toLowerCase().includes(filter.toLowerCase()) ||
+                task.time.toLowerCase().includes(filter.toLowerCase())
+            );
+
+            if (filteredTasks.length === 0) {
+                taskList.innerHTML = `
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                        <h3>${filter ? '未找到匹配的事项' : '暂无事项'}</h3>
+                        <p>${filter ? '尝试其他搜索关键词' : '点击上方添加按钮开始记录'}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            taskList.innerHTML = filteredTasks.map(task => `
+                <div class="task-item" data-id="${task.id}">
+                    <div class="task-content">
+                        <div class="task-time">📅 ${formatTime(task.time)}</div>
+                        <div class="task-text">${task.text}</div>
+                    </div>
+                    <div class="task-actions">
+                        <button class="btn-edit" onclick="editTask(${task.id})">编辑</button>
+                        <button class="btn-delete" onclick="deleteTask(${task.id})">删除</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function formatTime(timeStr) {
+            const date = new Date(timeStr.replace('T', ' '));
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            return `${year}-${month}-${day} ${hours}:${minutes}`;
+        }
+
+        function deleteTask(id) {
+            if (confirm('确定要删除这个事项吗？')) {
+                tasks = tasks.filter(task => task.id !== id);
+                saveTasks();
+                renderTasks();
+            }
+        }
+
+        function editTask(id) {
+            const task = tasks.find(t => t.id === id);
+            if (!task) return;
+
+            editingId = id;
+            document.getElementById('edit-time').value = task.time;
+            document.getElementById('edit-text').value = task.text;
+            document.getElementById('edit-modal').classList.add('active');
+        }
+
+        function closeEditModal() {
+            document.getElementById('edit-modal').classList.remove('active');
+            editingId = null;
+        }
+
+        function saveEdit() {
+            const time = document.getElementById('edit-time').value;
+            const text = document.getElementById('edit-text').value.trim();
+
+            if (!time || !text) {
+                alert('请填写时间和事项内容');
+                return;
+            }
+
+            const index = tasks.findIndex(t => t.id === editingId);
+            if (index !== -1) {
+                tasks[index].time = time;
+                tasks[index].text = text;
+                saveTasks();
+                renderTasks();
+            }
+
+            closeEditModal();
+        }
+
+        function filterTasks() {
+            const filter = document.getElementById('search-box').value;
+            renderTasks(filter);
+        }
+
+        function saveTasks() {
+            localStorage.setItem('notepad-tasks', JSON.stringify(tasks));
+        }
+
+        function loadTasks() {
+            const saved = localStorage.getItem('notepad-tasks');
+            if (saved) {
+                tasks = JSON.parse(saved);
+                renderTasks();
+            }
+        }
+
+        function clearAllTasks() {
+            if (tasks.length === 0) {
+                alert('没有可清空的事项');
+                return;
+            }
+
+            if (confirm(`确定要清空全部 ${tasks.length} 个事项吗？此操作不可恢复。`)) {
+                tasks = [];
+                saveTasks();
+                renderTasks();
+            }
+        }
+
+        function exportToExcel() {
+            if (tasks.length === 0) {
+                alert('没有可导出的事项');
+                return;
+            }
+
+            let csvContent = '时间,事项\n';
+            
+            tasks.forEach(task => {
+                const time = formatTime(task.time);
+                const text = task.text.replace(/,/g, '，');
+                csvContent += `"${time}","${text}"\n`;
+            });
+
+            const blob = new Blob([`\uFEFF${csvContent}`], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', `记事本_${new Date().toLocaleDateString('zh-CN').replace(/\//g, '-')}.csv`);
+            link.style.visibility = 'hidden';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function importFromExcel(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const content = e.target.result;
+                    const lines = content.split('\n').filter(line => line.trim());
+                    
+                    if (lines.length < 2) {
+                        alert('文件内容为空或格式不正确');
+                        return;
+                    }
+
+                    const newTasks = [];
+                    for (let i = 1; i < lines.length; i++) {
+                        const line = lines[i];
+                        const parts = parseCSVLine(line);
+                        
+                        if (parts.length >= 2) {
+                            let time = parts[0].trim();
+                            const text = parts[1].trim();
+                            
+                            if (!isValidDateTime(time)) {
+                                time = new Date().toISOString().slice(0, 16);
+                            } else {
+                                time = convertToISOFormat(time);
+                            }
+
+                            newTasks.push({
+                                id: Date.now() + i,
+                                time: time,
+                                text: text,
+                                createdAt: new Date().toISOString()
+                            });
+                        }
+                    }
+
+                    if (newTasks.length === 0) {
+                        alert('未找到有效的事项数据');
+                        return;
+                    }
+
+                    tasks = [...tasks, ...newTasks];
+                    saveTasks();
+                    renderTasks();
+                    alert(`成功导入 ${newTasks.length} 个事项`);
+                } catch (error) {
+                    alert('导入失败：' + error.message);
+                }
+            };
+
+            reader.readAsText(file, 'UTF-8');
+            event.target.value = '';
+        }
+
+        function parseCSVLine(line) {
+            const result = [];
+            let current = '';
+            let inQuotes = false;
+
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                
+                if (char === '"' && !inQuotes) {
+                    inQuotes = true;
+                } else if (char === '"' && inQuotes && line[i + 1] === '"') {
+                    current += '"';
+                    i++;
+                } else if (char === '"' && inQuotes) {
+                    inQuotes = false;
+                } else if (char === ',' && !inQuotes) {
+                    result.push(current);
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            result.push(current);
+
+            return result;
+        }
+
+        function isValidDateTime(str) {
+            return /^\d{4}[-/]\d{2}[-/]\d{2}[ T]\d{2}:\d{2}/.test(str);
+        }
+
+        function convertToISOFormat(str) {
+            str = str.replace(/\//g, '-').replace(' ', 'T');
+            const match = str.match(/^(\d{4})-(\d{2})-(\d{2})T?(\d{2}):(\d{2})/);
+            if (match) {
+                return `${match[1]}-${match[2]}-${match[3]}T${match[4]}:${match[5]}`;
+            }
+            return new Date().toISOString().slice(0, 16);
+        }
     </script>
 </body>
 </html>
