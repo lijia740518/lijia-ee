@@ -3,689 +3,436 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>记事本</title>
+    <title>重庆福彩路段推荐数据 - 2026年5月</title>
+    <meta name="description" content="重庆福彩城南区域渠道建设路段推荐数据展示">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
+        
         * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+            font-family: 'Noto Sans SC', sans-serif;
         }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
+        
+        .gradient-hero {
+            background: linear-gradient(135deg, #dc2626 0%, #ef4444 50%, #f97316 100%);
         }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
+        
+        .text-gradient {
+            background: linear-gradient(135deg, #dc2626, #f97316);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
-
-        .header {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-            padding: 25px;
-            text-align: center;
+        
+        .shadow-elegant {
+            box-shadow: 0 10px 40px -10px rgba(220, 38, 38, 0.15);
         }
-
-        .header h1 {
-            font-size: 28px;
-            font-weight: 600;
-            margin-bottom: 5px;
+        
+        .shadow-card {
+            box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.1);
         }
-
-        .header p {
-            font-size: 14px;
-            opacity: 0.9;
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px -10px rgba(220, 38, 38, 0.2);
         }
-
-        .content {
-            padding: 25px;
+        
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-out;
         }
-
-        .input-section {
-            display: grid;
-            grid-template-columns: 1fr 1fr auto;
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-
-        .input-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .input-group label {
-            font-size: 13px;
-            font-weight: 500;
-            color: #666;
-            margin-bottom: 8px;
-        }
-
-        .input-group input,
-        .input-group textarea {
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 15px;
-            transition: all 0.3s ease;
-            outline: none;
-        }
-
-        .input-group input:focus,
-        .input-group textarea:focus {
-            border-color: #4facfe;
-            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
-        }
-
-        .btn {
-            padding: 12px 25px;
-            border: none;
-            border-radius: 10px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            align-self: flex-end;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(79, 172, 254, 0.4);
-        }
-
-        .btn-secondary {
-            background: #f0f0f0;
-            color: #333;
-            margin-right: 10px;
-        }
-
-        .btn-secondary:hover {
-            background: #e0e0e0;
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-            color: white;
-        }
-
-        .btn-success:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(17, 153, 142, 0.4);
-        }
-
-        .btn-warning {
-            background: linear-gradient(135deg, #fc4a1a 0%, #f7b733 100%);
-            color: white;
-        }
-
-        .btn-warning:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(252, 74, 26, 0.4);
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .task-list {
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .task-item {
-            background: #f8f9fa;
-            border-radius: 12px;
-            padding: 18px;
-            margin-bottom: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            transition: all 0.3s ease;
-            border-left: 4px solid #4facfe;
-        }
-
-        .task-item:hover {
-            transform: translateX(5px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .task-content {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .task-time {
-            font-size: 12px;
-            color: #888;
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-
-        .task-text {
-            font-size: 16px;
-            color: #333;
-            line-height: 1.5;
-            word-break: break-word;
-        }
-
-        .task-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-left: 15px;
-        }
-
-        .btn-delete,
-        .btn-edit {
-            padding: 8px 12px;
-            border: none;
-            border-radius: 6px;
-            font-size: 12px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .btn-edit {
-            background: #4facfe;
-            color: white;
-        }
-
-        .btn-edit:hover {
-            background: #3d9ae8;
-        }
-
-        .btn-delete {
-            background: #ff6b6b;
-            color: white;
-        }
-
-        .btn-delete:hover {
-            background: #ee5a5a;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #999;
-        }
-
-        .empty-state svg {
-            width: 80px;
-            height: 80px;
-            margin-bottom: 20px;
-            opacity: 0.5;
-        }
-
-        .empty-state h3 {
-            font-size: 18px;
-            margin-bottom: 10px;
-            color: #666;
-        }
-
-        .empty-state p {
-            font-size: 14px;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        #file-input {
-            display: none;
-        }
-
-        .search-box {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 15px;
-            margin-bottom: 20px;
-            outline: none;
-            transition: all 0.3s ease;
-        }
-
-        .search-box:focus {
-            border-color: #4facfe;
-            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
-        }
-
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .modal {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            width: 90%;
-            max-width: 450px;
-            transform: translateY(-20px);
-            transition: all 0.3s ease;
-        }
-
-        .modal-overlay.active .modal {
-            transform: translateY(0);
-        }
-
-        .modal h2 {
-            margin-bottom: 20px;
-            color: #333;
-        }
-
-        .modal .input-group {
-            margin-bottom: 15px;
-        }
-
-        .modal .btn-group {
-            justify-content: flex-end;
-            margin-top: 25px;
-        }
-
-        @media (max-width: 600px) {
-            .input-section {
-                grid-template-columns: 1fr;
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
             }
-
-            .btn {
-                align-self: stretch;
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
-
-            .btn-group {
-                flex-wrap: wrap;
-            }
-
-            .task-item {
-                flex-direction: column;
-            }
-
-            .task-actions {
-                flex-direction: row;
-                margin-left: 0;
-                margin-top: 15px;
-            }
+        }
+        
+        .smooth-scroll {
+            scroll-behavior: smooth;
+        }
+        
+        .table-row-hover:hover {
+            background-color: #fef2f2;
+        }
+        
+        .filter-active {
+            background-color: #dc2626;
+            color: white;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #dc2626;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #b91c1c;
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>📝 记事本</h1>
-            <p>记录生活中的每一个重要时刻</p>
+<body class="smooth-scroll bg-gray-50">
+    <!-- Hero Section -->
+    <section class="relative min-h-[60vh] flex items-center justify-center overflow-hidden gradient-hero">
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-20 left-10 w-72 h-72 bg-white rounded-full blur-3xl animate-pulse"></div>
+            <div class="absolute bottom-20 right-10 w-96 h-96 bg-white rounded-full blur-3xl animate-pulse" style="animation-delay: 1s;"></div>
         </div>
 
-        <div class="content">
-            <div class="input-section">
-                <div class="input-group">
-                    <label for="task-time">时间</label>
-                    <input type="datetime-local" id="task-time" value="">
+        <div class="container mx-auto px-4 py-16 relative z-10">
+            <div class="max-w-5xl mx-auto text-center">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 mb-6 animate-fade-in">
+                    <i class="fas fa-map-marker-alt text-white text-sm"></i>
+                    <span class="text-white text-sm font-medium">城南区域 · 2026年5月</span>
                 </div>
-                <div class="input-group">
-                    <label for="task-input">事项</label>
-                    <input type="text" id="task-input" placeholder="输入事项内容...">
-                </div>
-                <button class="btn btn-primary" onclick="addTask()">添加</button>
-            </div>
 
-            <input type="text" class="search-box" id="search-box" placeholder="搜索事项...">
+                <h1 class="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight animate-fade-in">
+                    重庆福彩路段推荐数据
+                </h1>
 
-            <div class="btn-group">
-                <button class="btn btn-secondary" onclick="document.getElementById('file-input').click()">导入 Excel</button>
-                <button class="btn btn-success" onclick="exportToExcel()">导出 Excel</button>
-                <button class="btn btn-warning" onclick="clearAllTasks()">清空全部</button>
-            </div>
+                <p class="text-xl md:text-2xl text-white/90 mb-8 max-w-3xl mx-auto leading-relaxed animate-fade-in">
+                    城南区域渠道建设路段推荐表，涵盖巴南、大渡口、九龙坡、南岸、渝中五个区县
+                </p>
 
-            <div class="task-list" id="task-list">
-                <div class="empty-state">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                        <polyline points="14 2 14 8 20 8"></polyline>
-                        <line x1="16" y1="13" x2="8" y2="13"></line>
-                        <line x1="16" y1="17" x2="8" y2="17"></line>
-                        <polyline points="10 9 9 9 8 9"></polyline>
-                    </svg>
-                    <h3>暂无事项</h3>
-                    <p>点击上方添加按钮开始记录</p>
+                <!-- Statistics Cards -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto animate-fade-in">
+                    <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                        <div class="text-3xl font-bold text-white mb-1" id="totalRecords">88</div>
+                        <div class="text-white/80 text-sm">总记录数</div>
+                    </div>
+                    <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                        <div class="text-3xl font-bold text-white mb-1">5</div>
+                        <div class="text-white/80 text-sm">覆盖区县</div>
+                    </div>
+                    <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                        <div class="text-3xl font-bold text-white mb-1" id="totalStreets">0</div>
+                        <div class="text-white/80 text-sm">涉及街道</div>
+                    </div>
+                    <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                        <div class="text-3xl font-bold text-white mb-1">福店</div>
+                        <div class="text-white/80 text-sm">推荐类型</div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <div class="modal-overlay" id="edit-modal">
-        <div class="modal">
-            <h2>编辑事项</h2>
-            <div class="input-group">
-                <label for="edit-time">时间</label>
-                <input type="datetime-local" id="edit-time">
-            </div>
-            <div class="input-group">
-                <label for="edit-text">事项内容</label>
-                <input type="text" id="edit-text">
-            </div>
-            <div class="btn-group">
-                <button class="btn btn-secondary" onclick="closeEditModal()">取消</button>
-                <button class="btn btn-primary" onclick="saveEdit()">保存</button>
+    <!-- Filter Section -->
+    <section class="py-8 bg-white border-b border-gray-200 sticky top-0 z-40 shadow-sm">
+        <div class="container mx-auto px-4">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex flex-wrap gap-3 items-center">
+                    <div class="flex items-center gap-2 mr-4">
+                        <i class="fas fa-filter text-red-600"></i>
+                        <span class="font-semibold text-gray-900">筛选：</span>
+                    </div>
+                    
+                    <!-- District Filter -->
+                    <button onclick="filterByDistrict('all')" id="filter-all" class="filter-btn filter-active px-4 py-2 rounded-lg border border-gray-300 transition-all duration-300 hover:shadow-md">
+                        全部
+                    </button>
+                    <button onclick="filterByDistrict('巴南区')" class="filter-btn px-4 py-2 rounded-lg border border-gray-300 transition-all duration-300 hover:shadow-md">
+                        巴南区
+                    </button>
+                    <button onclick="filterByDistrict('大渡口区')" class="filter-btn px-4 py-2 rounded-lg border border-gray-300 transition-all duration-300 hover:shadow-md">
+                        大渡口区
+                    </button>
+                    <button onclick="filterByDistrict('九龙坡区')" class="filter-btn px-4 py-2 rounded-lg border border-gray-300 transition-all duration-300 hover:shadow-md">
+                        九龙坡区
+                    </button>
+                    <button onclick="filterByDistrict('南岸区')" class="filter-btn px-4 py-2 rounded-lg border border-gray-300 transition-all duration-300 hover:shadow-md">
+                        南岸区
+                    </button>
+                    <button onclick="filterByDistrict('渝中区')" class="filter-btn px-4 py-2 rounded-lg border border-gray-300 transition-all duration-300 hover:shadow-md">
+                        渝中区
+                    </button>
+                    
+                    <!-- Search Box -->
+                    <div class="ml-auto relative">
+                        <input type="text" id="searchInput" placeholder="搜索街道、地段、经理..." 
+                               class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent w-64"
+                               oninput="searchData()">
+                        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <input type="file" id="file-input" accept=".xlsx,.xls" onchange="importFromExcel(event)">
+    <!-- Data Table Section -->
+    <section class="py-12 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="max-w-7xl mx-auto">
+                <!-- Results Info -->
+                <div class="mb-6 flex justify-between items-center">
+                    <h2 class="text-2xl font-bold text-gray-900">
+                        <span class="text-gradient">路段推荐列表</span>
+                    </h2>
+                    <div class="text-gray-600">
+                        显示 <span id="showingCount" class="font-semibold text-red-600">88</span> 条记录
+                    </div>
+                </div>
+
+                <!-- Table Container -->
+                <div class="bg-white rounded-2xl shadow-elegant overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gradient-to-r from-red-600 to-orange-500 text-white">
+                                <tr>
+                                    <th class="px-4 py-4 text-left text-sm font-semibold">序号</th>
+                                    <th class="px-4 py-4 text-left text-sm font-semibold">区县</th>
+                                    <th class="px-4 py-4 text-left text-sm font-semibold">片区</th>
+                                    <th class="px-4 py-4 text-left text-sm font-semibold">街道</th>
+                                    <th class="px-4 py-4 text-left text-sm font-semibold">区域经理</th>
+                                    <th class="px-4 py-4 text-left text-sm font-semibold">联系电话</th>
+                                    <th class="px-4 py-4 text-left text-sm font-semibold">路段类型</th>
+                                    <th class="px-4 py-4 text-left text-sm font-semibold min-w-[200px]">具体可建地段</th>
+                                    <th class="px-4 py-4 text-left text-sm font-semibold">租金预估</th>
+                                    <th class="px-4 py-4 text-left text-sm font-semibold">推荐类型</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dataTableBody" class="divide-y divide-gray-200">
+                                <!-- Data will be inserted here by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Empty State -->
+                    <div id="emptyState" class="hidden py-16 text-center">
+                        <i class="fas fa-inbox text-6xl text-gray-300 mb-4"></i>
+                        <p class="text-gray-500 text-lg">未找到匹配的记录</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="max-w-7xl mx-auto text-center">
+                <p class="text-slate-400 text-sm">
+                    &copy; <span id="year"></span> 重庆福彩城南区域 · 数据来源：渠道建设路段推荐表
+                </p>
+            </div>
+        </div>
+    </footer>
 
     <script>
-        let tasks = [];
-        let editingId = null;
+        // Excel Data
+        const excelData = [
+            {"序号":1,"区县":"巴南区","所属片区":"B片区","街道":"鱼洞街道","区域经理":"卿平","联系电话":"13808306166","路段类型":"商圈路段","具体可建地段":"鱼洞新世纪（原麦当劳旁）","路段租金预估":"10000元/月","可建站推荐类型":"福店"},
+            {"序号":2,"区县":"巴南区","所属片区":"B片区","街道":"龙洲湾街道","区域经理":"卿平","联系电话":"13808306166","路段类型":"交通枢纽","具体可建地段":"轨道3号线学堂湾站1号出口附近","路段租金预估":"15000元/月","可建站推荐类型":"福店"},
+            {"序号":3,"区县":"巴南区","所属片区":"B片区","街道":"龙洲湾街道","区域经理":"卿平","联系电话":"13808306166","路段类型":"大中型社区","具体可建地段":"旭辉城三期门口（原快递驿站位置）","路段租金预估":"8000元/月","可建站推荐类型":"福店"},
+            {"序号":4,"区县":"巴南区","所属片区":"A片区","街道":"花溪街道","区域经理":"黄霄","联系电话":"13996330833","路段类型":"主干道","具体可建地段":"渝南大道岔路口段（公交车站旁）","路段租金预估":"6000元/月","可建站推荐类型":"福店"},
+            {"序号":5,"区县":"巴南区","所属片区":"A片区","街道":"李家沱街道","区域经理":"黄霄","联系电话":"13996330833","路段类型":"商业综合体","具体可建地段":"融汇半岛商业街入口","路段租金预估":"12000元/月","可建站推荐类型":"福店"},
+            {"序号":6,"区县":"巴南区","所属片区":"A片区","街道":"李家沱街道","区域经理":"黄霄","联系电话":"13996330833","路段类型":"专业市场","具体可建地段":"西部汽车城交易大厅外","路段租金预估":"9000元/月","可建站推荐类型":"福店"},
+            {"序号":7,"区县":"巴南区","所属片区":"A片区","街道":"花溪街道","区域经理":"黄霄","联系电话":"13996330833","路段类型":"商圈路段","具体可建地段":"花溪步行街中段","路段租金预估":"7000元/月","可建站推荐类型":"福店"},
+            {"序号":8,"区县":"巴南区","所属片区":"B片区","街道":"龙洲湾街道","区域经理":"卿平","联系电话":"13808306166","路段类型":"景区","具体可建地段":"巴滨路湿地公园入口","路段租金预估":"5000元/月","可建站推荐类型":"福店"},
+            {"序号":9,"区县":"巴南区","所属片区":"A片区","街道":"李家沱街道","区域经理":"黄霄","联系电话":"13996330833","路段类型":"交通枢纽","具体可建地段":"李家沱正街公交站旁","路段租金预估":"8000元/月","可建站推荐类型":"福店"},
+            {"序号":10,"区县":"巴南区","所属片区":"B片区","街道":"木洞镇","区域经理":"卿平","联系电话":"13808306166","路段类型":"乡镇","具体可建地段":"木洞镇农贸市场入口","路段租金预估":"3000元/月","可建站推荐类型":"福店"},
+            {"序号":11,"区县":"巴南区","所属片区":"B片区","街道":"鱼洞街道","区域经理":"卿平","联系电话":"13808306166","路段类型":"商圈路段","具体可建地段":"鱼洞万达广场外广场","路段租金预估":"15000元/月","可建站推荐类型":"福店"},
+            {"序号":12,"区县":"大渡口区","所属片区":"A片区","街道":"春晖路街道","区域经理":"岳健","联系电话":"13908380699","路段类型":"商圈路段","具体可建地段":"春晖路步行街中段","路段租金预估":"12000元/月","可建站推荐类型":"福店"},
+            {"序号":13,"区县":"大渡口区","所属片区":"A片区","街道":"跃进村街道","区域经理":"岳健","联系电话":"13908380699","路段类型":"大中型社区","具体可建地段":"金色世纪小区门口","路段租金预估":"7000元/月","可建站推荐类型":"福店"},
+            {"序号":14,"区县":"大渡口区","所属片区":"B片区","街道":"八桥镇","区域经理":"赵亮","联系电话":"13637703606","路段类型":"专业市场","具体可建地段":"重庆陶瓷市场入口","路段租金预估":"8000元/月","可建站推荐类型":"福店"},
+            {"序号":15,"区县":"大渡口区","所属片区":"A片区","街道":"新山村街道","区域经理":"岳健","联系电话":"13908380699","路段类型":"商圈路段","具体可建地段":"步行街香港城旁","路段租金预估":"15000元/月","可建站推荐类型":"福店"},
+            {"序号":16,"区县":"大渡口区","所属片区":"B片区","街道":"九宫庙街道","区域经理":"赵亮","联系电话":"13637703606","路段类型":"商圈路段","具体可建地段":"九宫庙步行街","路段租金预估":"10000元/月","可建站推荐类型":"福店"},
+            {"序号":17,"区县":"大渡口区","所属片区":"A片区","街道":"春晖路街道","区域经理":"岳健","联系电话":"13908380699","路段类型":"交通枢纽","具体可建地段":"轨道2号线新山村站出口","路段租金预估":"18000元/月","可建站推荐类型":"福店"},
+            {"序号":18,"区县":"大渡口区","所属片区":"B片区","街道":"跳磴镇","区域经理":"赵亮","联系电话":"13637703606","路段类型":"乡镇","具体可建地段":"跳磴镇正街农贸市场旁","路段租金预估":"3000元/月","可建站推荐类型":"福店"},
+            {"序号":19,"区县":"大渡口区","所属片区":"A片区","街道":"茄子溪街道","区域经理":"岳健","联系电话":"13908380699","路段类型":"专业市场","具体可建地段":"茄子溪批发市场入口","路段租金预估":"6000元/月","可建站推荐类型":"福店"},
+            {"序号":20,"区县":"大渡口区","所属片区":"B片区","街道":"八桥镇","区域经理":"赵亮","联系电话":"13637703606","路段类型":"大中型社区","具体可建地段":"绿地城小区门口","路段租金预估":"8000元/月","可建站推荐类型":"福店"},
+            {"序号":21,"区县":"大渡口区","所属片区":"A片区","街道":"新山村街道","区域经理":"岳健","联系电话":"13908380699","路段类型":"商圈路段","具体可建地段":"大渡口万象汇外广场","路段租金预估":"20000元/月","可建站推荐类型":"福店"},
+            {"序号":22,"区县":"大渡口区","所属片区":"B片区","街道":"九宫庙街道","区域经理":"赵亮","联系电话":"13637703606","路段类型":"主干道","具体可建地段":"钢花路九宫庙段","路段租金预估":"7000元/月","可建站推荐类型":"福店"},
+            {"序号":23,"区县":"大渡口区","所属片区":"A片区","街道":"春晖路街道","区域经理":"岳健","联系电话":"13908380699","路段类型":"商业综合体","具体可建地段":"天泰时尚广场入口","路段租金预估":"12000元/月","可建站推荐类型":"福店"},
+            {"序号":24,"区县":"大渡口区","所属片区":"B片区","街道":"八桥镇","区域经理":"赵亮","联系电话":"13637703606","路段类型":"商圈路段","具体可建地段":"双山步行街","路段租金预估":"9000元/月","可建站推荐类型":"福店"},
+            {"序号":25,"区县":"大渡口区","所属片区":"A片区","街道":"跃进村街道","区域经理":"岳健","联系电话":"13908380699","路段类型":"交通枢纽","具体可建地段":"大渡口公交站旁","路段租金预估":"10000元/月","可建站推荐类型":"福店"},
+            {"序号":26,"区县":"大渡口区","所属片区":"B片区","街道":"跳磴镇","区域经理":"赵亮","联系电话":"13637703606","路段类型":"乡镇","具体可建地段":"跳磴镇车站附近","路段租金预估":"2500元/月","可建站推荐类型":"福店"},
+            {"序号":27,"区县":"大渡口区","所属片区":"A片区","街道":"茄子溪街道","区域经理":"岳健","联系电话":"13908380699","路段类型":"专业市场","具体可建地段":"茄子溪海鲜市场旁","路段租金预估":"5000元/月","可建站推荐类型":"福店"},
+            {"序号":28,"区县":"大渡口区","所属片区":"B片区","街道":"九宫庙街道","区域经理":"赵亮","联系电话":"13637703606","路段类型":"大中型社区","具体可建地段":"蓝光中央广场小区门口","路段租金预估":"9000元/月","可建站推荐类型":"福店"},
+            {"序号":29,"区县":"大渡口区","所属片区":"A片区","街道":"新山村街道","区域经理":"岳健","联系电话":"13908380699","路段类型":"商圈路段","具体可建地段":"大渡口印象汇外","路段租金预估":"18000元/月","可建站推荐类型":"福店"},
+            {"序号":30,"区县":"大渡口区","所属片区":"B片区","街道":"八桥镇","区域经理":"赵亮","联系电话":"13637703606","路段类型":"主干道","具体可建地段":"双城路主干道旁","路段租金预估":"6000元/月","可建站推荐类型":"福店"},
+            {"序号":31,"区县":"九龙坡区","所属片区":"A片区","街道":"九龙街道","区域经理":"杨少万","联系电话":"13983001969","路段类型":"商圈路段","具体可建地段":"九龙门步行街","路段租金预估":"15000元/月","可建站推荐类型":"福店"},
+            {"序号":32,"区县":"九龙坡区","所属片区":"B片区","街道":"华岩镇","区域经理":"蔡仑","联系电话":"13983666006","路段类型":"专业市场","具体可建地段":"华福国际机电城","路段租金预估":"10000元/月","可建站推荐类型":"福店"},
+            {"序号":33,"区县":"九龙坡区","所属片区":"C片区","街道":"二郎街道","区域经理":"黄正裕","联系电话":"13608339989","路段类型":"商圈路段","具体可建地段":"二郎居然之家旁","路段租金预估":"12000元/月","可建站推荐类型":"福店"},
+            {"序号":34,"区县":"九龙坡区","所属片区":"A片区","街道":"石桥铺街道","区域经理":"杨少万","联系电话":"13983001969","路段类型":"交通枢纽","具体可建地段":"石桥铺地铁站出口","路段租金预估":"20000元/月","可建站推荐类型":"福店"},
+            {"序号":35,"区县":"九龙坡区","所属片区":"B片区","街道":"谢家湾街道","区域经理":"蔡仑","联系电话":"13983666006","路段类型":"商圈路段","具体可建地段":"谢家湾万象城外广场","路段租金预估":"25000元/月","可建站推荐类型":"福店"},
+            {"序号":36,"区县":"九龙坡区","所属片区":"C片区","街道":"杨家坪街道","区域经理":"黄正裕","联系电话":"13608339989","路段类型":"商圈路段","具体可建地段":"杨家坪步行街中段","路段租金预估":"18000元/月","可建站推荐类型":"福店"},
+            {"序号":37,"区县":"九龙坡区","所属片区":"A片区","街道":"九龙街道","区域经理":"杨少万","联系电话":"13983001969","路段类型":"大中型社区","具体可建地段":"盘龙花园小区门口","路段租金预估":"8000元/月","可建站推荐类型":"福店"},
+            {"序号":38,"区县":"九龙坡区","所属片区":"B片区","街道":"华岩镇","区域经理":"蔡仑","联系电话":"13983666006","路段类型":"乡镇","具体可建地段":"华岩镇农贸市场旁","路段租金预估":"4000元/月","可建站推荐类型":"福店"},
+            {"序号":39,"区县":"九龙坡区","所属片区":"C片区","街道":"二郎街道","区域经理":"黄正裕","联系电话":"13608339989","路段类型":"专业市场","具体可建地段":"二郎钢材市场入口","路段租金预估":"9000元/月","可建站推荐类型":"福店"},
+            {"序号":40,"区县":"九龙坡区","所属片区":"A片区","街道":"石桥铺街道","区域经理":"杨少万","联系电话":"13983001969","路段类型":"商圈路段","具体可建地段":"石桥铺电脑城外","路段租金预估":"15000元/月","可建站推荐类型":"福店"},
+            {"序号":41,"区县":"九龙坡区","所属片区":"B片区","街道":"谢家湾街道","区域经理":"蔡仑","联系电话":"13983666006","路段类型":"商业综合体","具体可建地段":"龙湖时代天街入口","路段租金预估":"30000元/月","可建站推荐类型":"福店"},
+            {"序号":42,"区县":"南岸区","所属片区":"A片区","街道":"南坪镇","区域经理":"伍成涛","联系电话":"13658308616","路段类型":"商圈路段","具体可建地段":"南坪步行街","路段租金预估":"20000元/月","可建站推荐类型":"福店"},
+            {"序号":43,"区县":"南岸区","所属片区":"B片区","街道":"南坪街道","区域经理":"陈先艳","联系电话":"13983220508","路段类型":"交通枢纽","具体可建地段":"轨道3号线南坪站出口","路段租金预估":"25000元/月","可建站推荐类型":"福店"},
+            {"序号":44,"区县":"南岸区","所属片区":"C片区","街道":"花园路街道","区域经理":"肖鹏","联系电话":"13996006009","路段类型":"商圈路段","具体可建地段":"花园路菜市场旁","路段租金预估":"8000元/月","可建站推荐类型":"福店"},
+            {"序号":45,"区县":"南岸区","所属片区":"A片区","街道":"天文街道","区域经理":"伍成涛","联系电话":"13658308616","路段类型":"大中型社区","具体可建地段":"金科世界城小区门口","路段租金预估":"10000元/月","可建站推荐类型":"福店"},
+            {"序号":46,"区县":"南岸区","所属片区":"B片区","街道":"海棠溪街道","区域经理":"陈先艳","联系电话":"13983220508","路段类型":"商圈路段","具体可建地段":"海棠溪新天地","路段租金预估":"12000元/月","可建站推荐类型":"福店"},
+            {"序号":47,"区县":"南岸区","所属片区":"C片区","街道":"铜元局街道","区域经理":"肖鹏","联系电话":"13996006009","路段类型":"商业综合体","具体可建地段":"金辉广场入口","路段租金预估":"15000元/月","可建站推荐类型":"福店"},
+            {"序号":48,"区县":"南岸区","所属片区":"A片区","街道":"南山街道","区域经理":"伍成涛","联系电话":"13658308616","路段类型":"景区","具体可建地段":"南山一棵树观景台入口","路段租金预估":"8000元/月","可建站推荐类型":"福店"},
+            {"序号":49,"区县":"南岸区","所属片区":"B片区","街道":"龙门浩街道","区域经理":"陈先艳","联系电话":"13983220508","路段类型":"景区","具体可建地段":"龙门浩老街","路段租金预估":"10000元/月","可建站推荐类型":"福店"},
+            {"序号":50,"区县":"南岸区","所属片区":"C片区","街道":"弹子石街道","区域经理":"肖鹏","联系电话":"13996006009","路段类型":"商圈路段","具体可建地段":"弹子石长嘉汇购物公园","路段租金预估":"18000元/月","可建站推荐类型":"福店"},
+            {"序号":51,"区县":"南岸区","所属片区":"A片区","街道":"长生桥镇","区域经理":"伍成涛","联系电话":"13658308616","路段类型":"乡镇","具体可建地段":"长生桥镇农贸市场","路段租金预估":"4000元/月","可建站推荐类型":"福店"},
+            {"序号":52,"区县":"南岸区","所属片区":"B片区","街道":"南坪街道","区域经理":"陈先艳","联系电话":"13983220508","路段类型":"商圈路段","具体可建地段":"南坪协信星光时代广场","路段租金预估":"20000元/月","可建站推荐类型":"福店"},
+            {"序号":53,"区县":"南岸区","所属片区":"C片区","街道":"花园路街道","区域经理":"肖鹏","联系电话":"13996006009","路段类型":"主干道","具体可建地段":"南湖路主干道旁","路段租金预估":"7000元/月","可建站推荐类型":"福店"},
+            {"序号":54,"区县":"南岸区","所属片区":"A片区","街道":"天文街道","区域经理":"伍成涛","联系电话":"13658308616","路段类型":"商圈路段","具体可建地段":"茶园奥园广场","路段租金预估":"15000元/月","可建站推荐类型":"福店"},
+            {"序号":55,"区县":"南岸区","所属片区":"B片区","街道":"海棠溪街道","区域经理":"陈先艳","联系电话":"13983220508","路段类型":"交通枢纽","具体可建地段":"海棠溪公交站旁","路段租金预估":"9000元/月","可建站推荐类型":"福店"},
+            {"序号":56,"区县":"南岸区","所属片区":"C片区","街道":"铜元局街道","区域经理":"肖鹏","联系电话":"13996006009","路段类型":"大中型社区","具体可建地段":"融侨半岛小区门口","路段租金预估":"10000元/月","可建站推荐类型":"福店"},
+            {"序号":57,"区县":"南岸区","所属片区":"A片区","街道":"南坪镇","区域经理":"伍成涛","联系电话":"13658308616","路段类型":"专业市场","具体可建地段":"南坪茶叶市场入口","路段租金预估":"8000元/月","可建站推荐类型":"福店"},
+            {"序号":58,"区县":"南岸区","所属片区":"B片区","街道":"龙门浩街道","区域经理":"陈先艳","联系电话":"13983220508","路段类型":"商圈路段","具体可建地段":"弹子石CBD核心区","路段租金预估":"22000元/月","可建站推荐类型":"福店"},
+            {"序号":59,"区县":"南岸区","所属片区":"C片区","街道":"弹子石街道","区域经理":"肖鹏","联系电话":"13996006009","路段类型":"主干道","具体可建地段":"腾龙大道主干道旁","路段租金预估":"9000元/月","可建站推荐类型":"福店"},
+            {"序号":60,"区县":"南岸区","所属片区":"A片区","街道":"长生桥镇","区域经理":"伍成涛","联系电话":"13658308616","路段类型":"商圈路段","具体可建地段":"长生桥步行街","路段租金预估":"6000元/月","可建站推荐类型":"福店"},
+            {"序号":61,"区县":"南岸区","所属片区":"B片区","街道":"南坪街道","区域经理":"陈先艳","联系电话":"13983220508","路段类型":"大中型社区","具体可建地段":"万达广场小区门口","路段租金预估":"12000元/月","可建站推荐类型":"福店"},
+            {"序号":62,"区县":"南岸区","所属片区":"C片区","街道":"花园路街道","区域经理":"肖鹏","联系电话":"13996006009","路段类型":"商圈路段","具体可建地段":"麦德龙超市旁","路段租金预估":"10000元/月","可建站推荐类型":"福店"},
+            {"序号":63,"区县":"南岸区","所属片区":"A片区","街道":"天文街道","区域经理":"伍成涛","联系电话":"13658308616","路段类型":"交通枢纽","具体可建地段":"茶园轻轨站出口","路段租金预估":"15000元/月","可建站推荐类型":"福店"},
+            {"序号":64,"区县":"南岸区","所属片区":"B片区","街道":"海棠溪街道","区域经理":"陈先艳","联系电话":"13983220508","路段类型":"商业综合体","具体可建地段":"喜来登酒店商业区","路段租金预估":"18000元/月","可建站推荐类型":"福店"},
+            {"序号":65,"区县":"南岸区","所属片区":"C片区","街道":"铜元局街道","区域经理":"肖鹏","联系电话":"13996006009","路段类型":"商圈路段","具体可建地段":"铜元道商业街","路段租金预估":"11000元/月","可建站推荐类型":"福店"},
+            {"序号":66,"区县":"南岸区","所属片区":"A片区","街道":"南山街道","区域经理":"伍成涛","联系电话":"13658308616","路段类型":"景区","具体可建地段":"南山植物园入口","路段租金预估":"7000元/月","可建站推荐类型":"福店"},
+            {"序号":67,"区县":"渝中区","所属片区":"A1片区","街道":"朝天门街道","区域经理":"段四海","联系电话":"13635459966","路段类型":"商圈路段","具体可建地段":"朝天门批发市场入口","路段租金预估":"25000元/月","可建站推荐类型":"福店"},
+            {"序号":68,"区县":"渝中区","所属片区":"A2片区","街道":"解放碑街道","区域经理":"易飞","联系电话":"13883666565","路段类型":"商圈路段","具体可建地段":"解放碑步行街核心段","路段租金预估":"50000元/月","可建站推荐类型":"福店"},
+            {"序号":69,"区县":"渝中区","所属片区":"B1片区","街道":"七星岗街道","区域经理":"段四海","联系电话":"13635459966","路段类型":"主干道","具体可建地段":"中山一路七星岗段","路段租金预估":"12000元/月","可建站推荐类型":"福店"},
+            {"序号":70,"区县":"渝中区","所属片区":"B2片区","街道":"南纪门街道","区域经理":"易飞","联系电话":"13883666565","路段类型":"专业市场","具体可建地段":"中药材市场入口","路段租金预估":"10000元/月","可建站推荐类型":"福店"},
+            {"序号":71,"区县":"渝中区","所属片区":"A1片区","街道":"两路口","区域经理":"段四海","联系电话":"13635459966","路段类型":"交通枢纽","具体可建地段":"两路口轻轨站出口","路段租金预估":"30000元/月","可建站推荐类型":"福店"},
+            {"序号":72,"区县":"渝中区","所属片区":"A2片区","街道":"菜园坝街道","区域经理":"易飞","联系电话":"13883666565","路段类型":"交通枢纽","具体可建地段":"重庆火车站广场","路段租金预估":"35000元/月","可建站推荐类型":"福店"},
+            {"序号":73,"区县":"渝中区","所属片区":"B1片区","街道":"大溪沟街道","区域经理":"段四海","联系电话":"13635459966","路段类型":"商圈路段","具体可建地段":"大溪沟菜市场旁","路段租金预估":"8000元/月","可建站推荐类型":"福店"},
+            {"序号":74,"区县":"渝中区","所属片区":"B2片区","街道":"上清寺街道","区域经理":"易飞","联系电话":"13883666565","路段类型":"商圈路段","具体可建地段":"上清寺太平洋百货旁","路段租金预估":"15000元/月","可建站推荐类型":"福店"},
+            {"序号":75,"区县":"渝中区","所属片区":"A1片区","街道":"大坪街道","区域经理":"段四海","联系电话":"13635459966","路段类型":"商圈路段","具体可建地段":"大坪时代天街外广场","路段租金预估":"40000元/月","可建站推荐类型":"福店"},
+            {"序号":76,"区县":"渝中区","所属片区":"A2片区","街道":"朝天门街道","区域经理":"易飞","联系电话":"13883666565","路段类型":"专业市场","具体可建地段":"朝天门来福士广场","路段租金预估":"45000元/月","可建站推荐类型":"福店"},
+            {"序号":77,"区县":"渝中区","所属片区":"B1片区","街道":"解放碑街道","区域经理":"段四海","联系电话":"13635459966","路段类型":"商业综合体","具体可建地段":"解放碑WFC购物中心","路段租金预估":"35000元/月","可建站推荐类型":"福店"},
+            {"序号":78,"区县":"渝中区","所属片区":"B2片区","街道":"七星岗街道","区域经理":"易飞","联系电话":"13883666565","路段类型":"大中型社区","具体可建地段":"财信渝中城小区门口","路段租金预估":"10000元/月","可建站推荐类型":"福店"},
+            {"序号":79,"区县":"渝中区","所属片区":"A1片区","街道":"两路口","区域经理":"段四海","联系电话":"13635459966","路段类型":"商圈路段","具体可建地段":"国际村批发市场","路段租金预估":"15000元/月","可建站推荐类型":"福店"},
+            {"序号":80,"区县":"渝中区","所属片区":"A2片区","街道":"菜园坝街道","区域经理":"易飞","联系电话":"13883666565","路段类型":"专业市场","具体可建地段":"菜园坝水果市场","路段租金预估":"12000元/月","可建站推荐类型":"福店"},
+            {"序号":81,"区县":"渝中区","所属片区":"B1片区","街道":"南纪门街道","区域经理":"段四海","联系电话":"13635459966","路段类型":"商圈路段","具体可建地段":"较场口夜市入口","路段租金预估":"18000元/月","可建站推荐类型":"福店"},
+            {"序号":82,"区县":"渝中区","所属片区":"B2片区","街道":"大溪沟街道","区域经理":"易飞","联系电话":"13883666565","路段类型":"交通枢纽","具体可建地段":"大溪沟轻轨站出口","路段租金预估":"20000元/月","可建站推荐类型":"福店"},
+            {"序号":83,"区县":"渝中区","所属片区":"A1片区","街道":"上清寺街道","区域经理":"段四海","联系电话":"13635459966","路段类型":"主干道","具体可建地段":"人民路主干道旁","路段租金预估":"15000元/月","可建站推荐类型":"福店"},
+            {"序号":84,"区县":"渝中区","所属片区":"A2片区","街道":"大坪街道","区域经理":"易飞","联系电话":"13883666565","路段类型":"商圈路段","具体可建地段":"大坪英利国际广场","路段租金预估":"25000元/月","可建站推荐类型":"福店"},
+            {"序号":85,"区县":"渝中区","所属片区":"B1片区","街道":"朝天门街道","区域经理":"段四海","联系电话":"13635459966","路段类型":"景区","具体可建地段":"洪崖洞景区入口","路段租金预估":"30000元/月","可建站推荐类型":"福店"},
+            {"序号":86,"区县":"渝中区","所属片区":"B2片区","街道":"解放碑街道","区域经理":"易飞","联系电话":"13883666565","路段类型":"商圈路段","具体可建地段":"解放碑国泰广场","路段租金预估":"40000元/月","可建站推荐类型":"福店"},
+            {"序号":87,"区县":"渝中区","所属片区":"A1片区","街道":"七星岗街道","区域经理":"段四海","联系电话":"13635459966","路段类型":"大中型社区","具体可建地段":"通远门小区门口","路段租金预估":"9000元/月","可建站推荐类型":"福店"},
+            {"序号":88,"区县":"渝中区","所属片区":"A2片区","街道":"两路口","区域经理":"易飞","联系电话":"13883666565","路段类型":"商业综合体","具体可建地段":"重百大楼入口","路段租金预估":"28000元/月","可建站推荐类型":"福店"}
+        ];
 
-        document.addEventListener('DOMContentLoaded', () => {
-            loadTasks();
-            setDefaultTime();
+        let filteredData = [...excelData];
+        let currentFilter = 'all';
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            renderTable(excelData);
+            updateStatistics();
+            document.getElementById('year').textContent = new Date().getFullYear();
         });
 
-        document.getElementById('search-box').addEventListener('input', filterTasks);
-
-        function setDefaultTime() {
-            const now = new Date();
-            const timeStr = now.toISOString().slice(0, 16);
-            document.getElementById('task-time').value = timeStr;
-        }
-
-        function addTask() {
-            const time = document.getElementById('task-time').value;
-            const text = document.getElementById('task-input').value.trim();
-
-            if (!time || !text) {
-                alert('请填写时间和事项内容');
+        // Render table
+        function renderTable(data) {
+            const tbody = document.getElementById('dataTableBody');
+            const emptyState = document.getElementById('emptyState');
+            
+            if (data.length === 0) {
+                tbody.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                document.getElementById('showingCount').textContent = '0';
                 return;
             }
-
-            const task = {
-                id: Date.now(),
-                time: time,
-                text: text,
-                createdAt: new Date().toISOString()
-            };
-
-            tasks.push(task);
-            saveTasks();
-            renderTasks();
-
-            document.getElementById('task-input').value = '';
-            setDefaultTime();
-        }
-
-        function renderTasks(filter = '') {
-            const taskList = document.getElementById('task-list');
-            const filteredTasks = tasks.filter(task => 
-                task.text.toLowerCase().includes(filter.toLowerCase()) ||
-                task.time.toLowerCase().includes(filter.toLowerCase())
-            );
-
-            if (filteredTasks.length === 0) {
-                taskList.innerHTML = `
-                    <div class="empty-state">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                            <polyline points="14 2 14 8 20 8"></polyline>
-                            <line x1="16" y1="13" x2="8" y2="13"></line>
-                            <line x1="16" y1="17" x2="8" y2="17"></line>
-                            <polyline points="10 9 9 9 8 9"></polyline>
-                        </svg>
-                        <h3>${filter ? '未找到匹配的事项' : '暂无事项'}</h3>
-                        <p>${filter ? '尝试其他搜索关键词' : '点击上方添加按钮开始记录'}</p>
-                    </div>
-                `;
-                return;
-            }
-
-            taskList.innerHTML = filteredTasks.map(task => `
-                <div class="task-item" data-id="${task.id}">
-                    <div class="task-content">
-                        <div class="task-time">📅 ${formatTime(task.time)}</div>
-                        <div class="task-text">${task.text}</div>
-                    </div>
-                    <div class="task-actions">
-                        <button class="btn-edit" onclick="editTask(${task.id})">编辑</button>
-                        <button class="btn-delete" onclick="deleteTask(${task.id})">删除</button>
-                    </div>
-                </div>
+            
+            emptyState.classList.add('hidden');
+            document.getElementById('showingCount').textContent = data.length;
+            
+            tbody.innerHTML = data.map((row, index) => `
+                <tr class="table-row-hover transition-colors duration-200 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}">
+                    <td class="px-4 py-3 text-sm text-gray-900">${row.序号}</td>
+                    <td class="px-4 py-3 text-sm text-gray-900 font-medium">${row.区县}</td>
+                    <td class="px-4 py-3 text-sm text-gray-600">${row.所属片区}</td>
+                    <td class="px-4 py-3 text-sm text-gray-900">${row.街道}</td>
+                    <td class="px-4 py-3 text-sm text-gray-900">${row.区域经理}</td>
+                    <td class="px-4 py-3 text-sm text-gray-600">
+                        <a href="tel:${row.联系电话}" class="text-blue-600 hover:text-blue-800">
+                            ${row.联系电话}
+                        </a>
+                    </td>
+                    <td class="px-4 py-3 text-sm">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                            ${row.路段类型}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3 text-sm text-gray-900 max-w-xs truncate" title="${row.具体可建地段}">
+                        ${row.具体可建地段}
+                    </td>
+                    <td class="px-4 py-3 text-sm text-gray-900 font-semibold">${row.路段租金预估}</td>
+                    <td class="px-4 py-3 text-sm">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            ${row.可建站推荐类型}
+                        </span>
+                    </td>
+                </tr>
             `).join('');
         }
 
-        function formatTime(timeStr) {
-            const date = new Date(timeStr.replace('T', ' '));
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            const hours = String(date.getHours()).padStart(2, '0');
-            const minutes = String(date.getMinutes()).padStart(2, '0');
-            return `${year}-${month}-${day} ${hours}:${minutes}`;
-        }
-
-        function deleteTask(id) {
-            if (confirm('确定要删除这个事项吗？')) {
-                tasks = tasks.filter(task => task.id !== id);
-                saveTasks();
-                renderTasks();
-            }
-        }
-
-        function editTask(id) {
-            const task = tasks.find(t => t.id === id);
-            if (!task) return;
-
-            editingId = id;
-            document.getElementById('edit-time').value = task.time;
-            document.getElementById('edit-text').value = task.text;
-            document.getElementById('edit-modal').classList.add('active');
-        }
-
-        function closeEditModal() {
-            document.getElementById('edit-modal').classList.remove('active');
-            editingId = null;
-        }
-
-        function saveEdit() {
-            const time = document.getElementById('edit-time').value;
-            const text = document.getElementById('edit-text').value.trim();
-
-            if (!time || !text) {
-                alert('请填写时间和事项内容');
-                return;
-            }
-
-            const index = tasks.findIndex(t => t.id === editingId);
-            if (index !== -1) {
-                tasks[index].time = time;
-                tasks[index].text = text;
-                saveTasks();
-                renderTasks();
-            }
-
-            closeEditModal();
-        }
-
-        function filterTasks() {
-            const filter = document.getElementById('search-box').value;
-            renderTasks(filter);
-        }
-
-        function saveTasks() {
-            localStorage.setItem('notepad-tasks', JSON.stringify(tasks));
-        }
-
-        function loadTasks() {
-            const saved = localStorage.getItem('notepad-tasks');
-            if (saved) {
-                tasks = JSON.parse(saved);
-                renderTasks();
-            }
-        }
-
-        function clearAllTasks() {
-            if (tasks.length === 0) {
-                alert('没有可清空的事项');
-                return;
-            }
-
-            if (confirm(`确定要清空全部 ${tasks.length} 个事项吗？此操作不可恢复。`)) {
-                tasks = [];
-                saveTasks();
-                renderTasks();
-            }
-        }
-
-        function exportToExcel() {
-            if (tasks.length === 0) {
-                alert('没有可导出的事项');
-                return;
-            }
-
-            let csvContent = '时间,事项\n';
+        // Filter by district
+        function filterByDistrict(district) {
+            currentFilter = district;
             
-            tasks.forEach(task => {
-                const time = formatTime(task.time);
-                const text = task.text.replace(/,/g, '，');
-                csvContent += `"${time}","${text}"\n`;
+            // Update button styles
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('filter-active');
             });
-
-            const blob = new Blob([`\uFEFF${csvContent}`], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
             
-            link.setAttribute('href', url);
-            link.setAttribute('download', `记事本_${new Date().toLocaleDateString('zh-CN').replace(/\//g, '-')}.csv`);
-            link.style.visibility = 'hidden';
+            if (district === 'all') {
+                document.getElementById('filter-all').classList.add('filter-active');
+                filteredData = [...excelData];
+            } else {
+                event.target.classList.add('filter-active');
+                filteredData = excelData.filter(row => row.区县 === district);
+            }
             
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            // Clear search input
+            document.getElementById('searchInput').value = '';
+            
+            renderTable(filteredData);
         }
 
-        function importFromExcel(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const content = e.target.result;
-                    const lines = content.split('\n').filter(line => line.trim());
-                    
-                    if (lines.length < 2) {
-                        alert('文件内容为空或格式不正确');
-                        return;
-                    }
-
-                    const newTasks = [];
-                    for (let i = 1; i < lines.length; i++) {
-                        const line = lines[i];
-                        const parts = parseCSVLine(line);
-                        
-                        if (parts.length >= 2) {
-                            let time = parts[0].trim();
-                            const text = parts[1].trim();
-                            
-                            if (!isValidDateTime(time)) {
-                                time = new Date().toISOString().slice(0, 16);
-                            } else {
-                                time = convertToISOFormat(time);
-                            }
-
-                            newTasks.push({
-                                id: Date.now() + i,
-                                time: time,
-                                text: text,
-                                createdAt: new Date().toISOString()
-                            });
-                        }
-                    }
-
-                    if (newTasks.length === 0) {
-                        alert('未找到有效的事项数据');
-                        return;
-                    }
-
-                    tasks = [...tasks, ...newTasks];
-                    saveTasks();
-                    renderTasks();
-                    alert(`成功导入 ${newTasks.length} 个事项`);
-                } catch (error) {
-                    alert('导入失败：' + error.message);
-                }
-            };
-
-            reader.readAsText(file, 'UTF-8');
-            event.target.value = '';
-        }
-
-        function parseCSVLine(line) {
-            const result = [];
-            let current = '';
-            let inQuotes = false;
-
-            for (let i = 0; i < line.length; i++) {
-                const char = line[i];
-                
-                if (char === '"' && !inQuotes) {
-                    inQuotes = true;
-                } else if (char === '"' && inQuotes && line[i + 1] === '"') {
-                    current += '"';
-                    i++;
-                } else if (char === '"' && inQuotes) {
-                    inQuotes = false;
-                } else if (char === ',' && !inQuotes) {
-                    result.push(current);
-                    current = '';
-                } else {
-                    current += char;
-                }
+        // Search data
+        function searchData() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+            
+            if (!searchTerm) {
+                filteredData = currentFilter === 'all' 
+                    ? [...excelData] 
+                    : excelData.filter(row => row.区县 === currentFilter);
+            } else {
+                filteredData = excelData.filter(row => {
+                    const matchesFilter = currentFilter === 'all' || row.区县 === currentFilter;
+                    const matchesSearch = 
+                        row.街道.toLowerCase().includes(searchTerm) ||
+                        row.具体可建地段.toLowerCase().includes(searchTerm) ||
+                        row.区域经理.toLowerCase().includes(searchTerm) ||
+                        row.路段类型.toLowerCase().includes(searchTerm) ||
+                        row.所属片区.toLowerCase().includes(searchTerm);
+                    return matchesFilter && matchesSearch;
+                });
             }
-            result.push(current);
-
-            return result;
+            
+            renderTable(filteredData);
         }
 
-        function isValidDateTime(str) {
-            return /^\d{4}[-/]\d{2}[-/]\d{2}[ T]\d{2}:\d{2}/.test(str);
-        }
-
-        function convertToISOFormat(str) {
-            str = str.replace(/\//g, '-').replace(' ', 'T');
-            const match = str.match(/^(\d{4})-(\d{2})-(\d{2})T?(\d{2}):(\d{2})/);
-            if (match) {
-                return `${match[1]}-${match[2]}-${match[3]}T${match[4]}:${match[5]}`;
-            }
-            return new Date().toISOString().slice(0, 16);
+        // Update statistics
+        function updateStatistics() {
+            const uniqueStreets = new Set(excelData.map(row => row.街道));
+            document.getElementById('totalStreets').textContent = uniqueStreets.size;
         }
     </script>
 </body>
